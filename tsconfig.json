@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"module": "commonjs",
+		"outDir": "output",
+		"paths": {
+			"*": [
+				"./typing/*"
+			]
+		},
+		"rootDir": "src",
+		"strict": true,
+		"target": "es2017",
+		"typeRoots": [
+			"node_modules/@types",
+			"typing",
+		],
+	}
+}
