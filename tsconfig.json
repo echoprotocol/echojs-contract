@@ -15,5 +15,8 @@
 			"node_modules/@types",
 			"typing",
 		],
-	}
+	},
+	"exclude": [
+		"./test"
+	]
 }

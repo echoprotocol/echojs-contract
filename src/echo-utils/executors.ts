@@ -1,12 +1,10 @@
 import comprehension from 'comprehension';
 import { TransactionBuilder, PrivateKey } from 'echojs-lib';
 import { Apis } from 'echojs-ws';
-
-import parseInput from './parseInput';
-
-import { AbiFunction } from './@types/abiFunction';
-import parseOutput from './parseOutput';
 import { keccak256 } from 'js-sha3';
+import parseInput from '../simple-utils/parseInput';
+import parseOutput from '../simple-utils/parseOutput';
+import { AbiFunction } from '../@types/abiFunction';
 
 function getFunctionCode(abiFunction: AbiFunction) {
 	return keccak256(`${abiFunction.name}(${abiFunction.inputs.map(({ type }) => type).join(',')})`).substr(0, 8);
@@ -41,7 +39,7 @@ export async function call(
 	const transactionResultId = await transaction.broadcast().then((res) => res[0].trx.operation_results[0][1]);
 	const callResult = await Apis.instance().dbApi().exec('get_contract_result', [transactionResultId])
 		.then((res) => res.exec_res.output);
-	return parseResult(callResult, abiFunction);
+	return parseResult(callResult as string, abiFunction);
 }
 
 export async function view(contractId: string, accountId: string | null, abiFunction: AbiFunction, args: Array<any>) {
