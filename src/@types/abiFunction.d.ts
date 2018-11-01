@@ -1,6 +1,6 @@
 import SolType from './sol-type';
 
-interface AbiFunction {
+export default interface AbiFunction {
 	constant: boolean;
 	inputs: Array<{ name: string, type: SolType }>;
 	name: string;
