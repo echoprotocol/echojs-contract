@@ -1,8 +1,10 @@
 {
 	"compilerOptions": {
 		"baseUrl": ".",
+		"declaration": true,
 		"module": "commonjs",
 		"outDir": "output",
+		"allowJs": false,
 		"paths": {
 			"*": [
 				"./typing/*"

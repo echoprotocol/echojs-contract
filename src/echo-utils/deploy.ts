@@ -2,7 +2,7 @@ import { PrivateKey, ContractFrame } from "echojs-lib";
 import { Apis } from "echojs-ws";
 import Contract from "../Contract";
 import getAccountId from "./getAccountId";
-import AbiFunction from "../@types/abiFunction";
+import AbiFunction from "../../@types/abiFunction";
 
 export default async function deploy(
 	bytecode: Buffer,

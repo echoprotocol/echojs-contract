@@ -4,7 +4,7 @@ import { Apis } from 'echojs-ws';
 import { keccak256 } from 'js-sha3';
 import parseInput from '../simple-utils/parseInput';
 import parseOutput from '../simple-utils/parseOutput';
-import AbiFunction from '../@types/abiFunction';
+import AbiFunction from '../../@types/abiFunction';
 
 function getFunctionCode(abiFunction: AbiFunction) {
 	return keccak256(`${abiFunction.name}(${abiFunction.inputs.map(({ type }) => type).join(',')})`).substr(0, 8);
