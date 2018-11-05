@@ -8,7 +8,7 @@ const MAX_CONTRACT_ID = new BN(2).pow(19).minus(1);
 export default class Contract {
 	[method: string]: ((...args: Array<any>) => Promise<any>) | any;
 
-	private contractId: string;
+	public readonly contractId: string;
 	private accountId: string | null = null;
 	private accountPrivateKey: PrivateKey | null = null;
 
@@ -27,7 +27,7 @@ export default class Contract {
 		this.contractId = contractId;
 		for (let abiFunction of abi) {
 			if (abiFunction.type !== 'function') {
-				console.warn(`${abiFunction.name}: ${abiFunction.type} is not implemented`);
+				// console.warn(`${abiFunction.name}: ${abiFunction.type} is not implemented`);
 				continue;
 			}
 			this[abiFunction.name] = async (...args: Array<any>) => {

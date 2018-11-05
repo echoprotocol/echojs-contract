@@ -8,6 +8,7 @@ export default async function deploy(
 	bytecode: Buffer,
 	abi: Array<AbiFunction>,
 	privateKey: PrivateKey,
+	args?: Array<any>,
 ): Promise<Contract> {
 	const accountId = await getAccountId(privateKey);
 	const contractFrame = new ContractFrame();

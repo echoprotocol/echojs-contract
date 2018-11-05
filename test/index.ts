@@ -8,4 +8,3 @@ describe('connect', () => {
 describe('Contract', () => {
 	import('./simple');
 });
-
