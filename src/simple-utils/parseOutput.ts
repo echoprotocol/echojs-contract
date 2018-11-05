@@ -23,8 +23,18 @@ export function address(output: string) {
 	return `1.${isContract ? '16' : '2'}.${new BN(output.substr(26), 16)}`;
 }
 
+export function bytesN(bytesCount: number, output: string): Buffer {
+	if (!Number.isSafeInteger(bytesCount) || bytesCount <= 0 || bytesCount > 32) {
+		throw new Error(`invalid type bytes${bytesCount}`);
+	}
+	const charsCount = bytesCount * 2;
+	return Buffer.from(output.substr(output.length - charsCount, charsCount), 'hex');
+}
+
 export default function parseOutput(output: string, type: SolType) {
 	if (type === 'bool') return bool(output);
 	if (type === 'address') return address(output);
+	const bytesNMatch = type.match(/^bytes(\d+)$/);
+	if (bytesNMatch) return bytesN(Number.parseInt(bytesNMatch[1], 10), output);
 	throw new Error(`parsing of ${type} is not implemented`);
 }
