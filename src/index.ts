@@ -1,4 +1,4 @@
-import Contract from './Contract';
+import Contract, { getDefaultAccountId, setDefaultAccount } from './Contract';
 import connect from './echo-utils/connect';
 import deploy from './echo-utils/deploy';
 import getAccountId from './echo-utils/getAccountId';
@@ -10,6 +10,8 @@ export default Contract;
 export {
 	connect,
 	Contract,
+	getDefaultAccountId,
+	setDefaultAccount,
 	deploy,
 	AbiFunction,
 	getAccountId,

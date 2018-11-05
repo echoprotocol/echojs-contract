@@ -5,6 +5,9 @@ import AbiFunction from '../@types/abiFunction';
 
 const MAX_CONTRACT_ID = new BN(2).pow(19).minus(1);
 
+let defaultAccountId: string | null = null;
+let defaultPrivateKey: PrivateKey | null = null;
+
 export default class Contract {
 	[method: string]: ((...args: Array<any>) => Promise<any>) | any;
 
@@ -31,12 +34,14 @@ export default class Contract {
 				continue;
 			}
 			this[abiFunction.name] = async (...args: Array<any>) => {
-				if (abiFunction.constant) return view(this.contractId, this.accountId, abiFunction, args);
-				if (!this.accountId) throw new Error('is not authorized');
+				const accountId = this.accountId || defaultAccountId;
+				const privateKey = this.accountPrivateKey || defaultPrivateKey;
+				if (abiFunction.constant) return view(this.contractId, accountId, abiFunction, args);
+				if (!accountId) throw new Error('is not authorized');
 				return call(
 					this.contractId,
-					this.accountId as string,
-					this.accountPrivateKey as PrivateKey,
+					accountId as string,
+					privateKey as PrivateKey,
 					abiFunction,
 					args,
 				);
@@ -51,4 +56,15 @@ export default class Contract {
 		this.accountPrivateKey = privateKey;
 	}
 
+}
+
+export async function setDefaultAccount(privateKey: PrivateKey) {
+	const publicKey = privateKey.toPublicKey();
+	defaultAccountId = await ChainStore.FetchChain('getAccountRefsOfKey', publicKey.toString())
+		.then((res) => res.toJS()[0] as string);
+	defaultPrivateKey = privateKey;
+}
+
+export function getDefaultAccountId() {
+	return defaultAccountId;
 }
