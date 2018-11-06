@@ -1,7 +1,7 @@
 import { PrivateKey, ContractFrame } from "echojs-lib";
 import { Apis } from "echojs-ws";
 import Contract from "../Contract";
-import parseInput from "../simple-utils/parseInput";
+import { parseInput } from "../simple-utils/parseInput";
 import getAccountId from "./getAccountId";
 import AbiFunction from "../../@types/abiFunction";
 import { GET_DEFAULT_ABI_FUNCTION } from "../index";

@@ -14,6 +14,8 @@ describe('Contract', () => {
 	import('./simple');
 });
 
+import('./dynamicArrays');
+
 describe('constructor arguments', () => {
 	it('uint32', async function () {
 		this.timeout(12e3);

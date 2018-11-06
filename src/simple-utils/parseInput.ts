@@ -56,7 +56,7 @@ export function uintN(bitsCount: number = 256, input: number | BN = 0): string {
 	return $(64 - preRes.length, () => 0).join('') + preRes;
 }
 
-export default function parseInput(type: SolType, input: any) {
+export function parseInput(type: SolType, input: any): string {
 	if (type === 'address') return address(input);
 	if (/^bytes\d+$/.test(type)) {
 		const bytesCount = Number.parseInt(type.substr(5), 10);
@@ -67,4 +67,29 @@ export default function parseInput(type: SolType, input: any) {
 		return uintN(bitsCount, input);
 	}
 	throw new Error(`input type ${type} not implemented`);
+}
+
+export default function parseInputs(inputs: Array<{ type: SolType, arg: any }>): string {
+	const post: Array<{ offsetIndex: number, args: string }> = [];
+	const result: Array<string> = [];
+	for (let { type, arg } of inputs) {
+		const dynamicArrMatch = type.match(/^(.*)\[]$/);
+		if (dynamicArrMatch) {
+			if (!Array.isArray(arg)) arg = [arg];
+			const arr = arg as Array<any>;
+			post.push({
+				offsetIndex: result.length,
+				args: parseInputs([arr.length, ...arr].map((element) =>
+					({ type: dynamicArrMatch[1] as SolType, arg: element }))),
+			});
+			result.push(''.padEnd(64, '0'));
+			continue;
+		}
+		result.push(parseInput(type, arg));
+	}
+	for (let { offsetIndex, args } of post) {
+		result[offsetIndex] = parseInput('uint256', result.length * 32);
+		result.push(...$({ to: args.length / 64, step: 64 }, (i) => args.substr(i, 64)));
+	}
+	return result.join('');
 }

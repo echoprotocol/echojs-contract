@@ -2,7 +2,7 @@ import comprehension from 'comprehension';
 import { TransactionBuilder, PrivateKey } from 'echojs-lib';
 import { Apis } from 'echojs-ws';
 import { keccak256 } from 'js-sha3';
-import parseInput from '../simple-utils/parseInput';
+import parseInputs, { parseInput } from '../simple-utils/parseInput';
 import parseOutput from '../simple-utils/parseOutput';
 import AbiFunction from '../../@types/abiFunction';
 
@@ -23,7 +23,7 @@ export async function call(
 ): Promise<any> {
 	if (abiFunction.type !== 'function') throw new Error('is not a function');
 	const functionCode = getFunctionCode(abiFunction);
-	const pureArgs = abiFunction.inputs.map(({ type }, inputIndex) => parseInput(type, args[inputIndex])).join('');
+	const pureArgs = parseInputs(abiFunction.inputs.map(({ type }, inputIndex) => ({ type, arg: args[inputIndex] })));
 	const transaction = new TransactionBuilder();
 	transaction.add_type_operation('contract', {
 		registrar: accountId,
