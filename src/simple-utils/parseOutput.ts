@@ -28,7 +28,7 @@ export function bytesN(bytesCount: number, output: string): Buffer {
 		throw new Error(`invalid type bytes${bytesCount}`);
 	}
 	const charsCount = bytesCount * 2;
-	return Buffer.from(output.substr(output.length - charsCount, charsCount), 'hex');
+	return Buffer.from(output.substr(0, charsCount), 'hex');
 }
 
 export default function parseOutput(output: string, type: SolType) {
