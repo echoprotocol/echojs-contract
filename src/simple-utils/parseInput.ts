@@ -53,7 +53,7 @@ export function uintN(bitsCount: number = 256, input: number | BN = 0): string {
 	if (!input.isInteger()) throw new Error('input is not integer');
 	if (input.gte(new BN(2).pow(bitsCount))) throw new Error('is greater than max value');
 	const preRes = input.toString(16);
-	return $(bitsCount / 8 - preRes.length, () => 0).join('') + preRes;
+	return $(64 - preRes.length, () => 0).join('') + preRes;
 }
 
 export default function parseInput(type: SolType, input: any) {

@@ -2,6 +2,7 @@ import BN from 'bignumber.js';
 import { PrivateKey, ChainStore } from 'echojs-lib';
 import { view, call } from './echo-utils/executors';
 import AbiFunction from '../@types/abiFunction';
+import deploy from './echo-utils/deploy';
 
 const MAX_CONTRACT_ID = new BN(2).pow(19).minus(1);
 
@@ -33,7 +34,8 @@ export default class Contract {
 				// console.warn(`${abiFunction.name}: ${abiFunction.type} is not implemented`);
 				continue;
 			}
-			this[abiFunction.name] = async (...args: Array<any>) => {
+			if (!abiFunction.name) throw new Error('function has no name');
+			this[abiFunction.name as string] = async (...args: Array<any>) => {
 				const accountId = this.accountId || defaultAccountId;
 				const privateKey = this.accountPrivateKey || defaultPrivateKey;
 				if (abiFunction.constant) return view(this.contractId, accountId, abiFunction, args);
@@ -54,6 +56,15 @@ export default class Contract {
 		this.accountId = await ChainStore.FetchChain('getAccountRefsOfKey', publicKey.toString())
 			.then((res) => res.toJS()[0] as string);
 		this.accountPrivateKey = privateKey;
+	}
+
+	public static deploy(
+		bytecode: Buffer,
+		abi: Array<AbiFunction>,
+		privateKey: PrivateKey,
+		args: Array<any>,
+	): Promise<Contract> {
+		return deploy(bytecode, abi, privateKey, args);
 	}
 
 }

@@ -12,7 +12,7 @@ function getFunctionCode(abiFunction: AbiFunction) {
 
 function parseResult(callResult: string, abiFunction: AbiFunction): any {
 	const splittedRes = comprehension(callResult.length / 64, (index) => callResult.substr(index * 64, 64));
-	const result = abiFunction.outputs.map(({ type }, index) => parseOutput(splittedRes[index], type));
+	const result = (abiFunction.outputs || []).map(({ type }, index) => parseOutput(splittedRes[index], type));
 	if (result.length === 0) return null;
 	if (result.length === 1) return result[0];
 	return result;
