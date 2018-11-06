@@ -20,5 +20,7 @@ export default async function deploy(
 	const deployResultId: string = deployCallRes[0].trx.operation_results[0][1];
 	const deployResult = await Apis.instance().dbApi().exec('get_contract_result', [deployResultId]);
 	const contractId = `1.16.${Number.parseInt((deployResult.exec_res.new_address as string).substr(8), 16)}`;
-	return new Contract(contractId, abi);
+	const contract = new Contract(contractId, abi);
+	await contract.setAccount(privateKey);
+	return contract;
 }

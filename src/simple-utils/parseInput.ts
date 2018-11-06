@@ -1,5 +1,5 @@
 import BN from 'bignumber.js';
-import comprehension from 'comprehension';
+import $ from 'comprehension';
 import SolType from '../../@types/sol-type';
 
 export function address(input: string): string {
@@ -9,19 +9,21 @@ export function address(input: string): string {
 	if (preRes.length > 38) throw new Error('invalid address id');
 	const isContract = sourceAddress.split('.')[1] === '16';
 	return [
-		comprehension(25, () => 0).join(''),
+		$(25, () => 0).join(''),
 		isContract ? '1' : '0',
-		comprehension(38 - preRes.length, () => 0).join(''),
+		$(38 - preRes.length, () => 0).join(''),
 		preRes,
 	].join('');
 }
 
 type Align = 'none' | 'left' | 'right';
 
-export function bytesN(bytesCount: number, input?: string | Buffer, align: Align = 'none'): string {
+export function bytesN(bytesCount: number, input?: string | Buffer | { value: string | Buffer, align: Align }): string {
 	if (bytesCount <= 0) throw new Error('bytes count is not positive');
 	if (!Number.isSafeInteger(bytesCount)) throw new Error('bytes count is not a integer');
-	if (!input) return comprehension(bytesCount, () => 0).join('');
+	const align: Align = (input as { value: string | Buffer, align: Align }).align || 'none';
+	input = (input as { value: string | Buffer, align: Align }).value || input;
+	if (!input) return $(bytesCount, () => 0).join('');
 	if (typeof input === 'string') {
 		if (/^0x([a-f\d]{2}){1,32}$/.test(input)) input = Buffer.from(input.substr(2), 'hex');
 		else input = Buffer.from(input);
@@ -31,10 +33,11 @@ export function bytesN(bytesCount: number, input?: string | Buffer, align: Align
 		if (input.length > bytesCount) throw new Error('buffer is too large');
 		const arr = Array.from(input);
 		if (align === 'none') throw new Error('buffer is too short');
-		if (align === 'left') input = Buffer.from([...arr, ...comprehension(bytesCount - arr.length, () => 0)]);
-		else input = Buffer.from([...comprehension(bytesCount - arr.length, () => 0), ...arr]);
+		if (align === 'left') input = Buffer.from([...arr, ...$(bytesCount - arr.length, () => 0)]);
+		else if (align === 'right') input = Buffer.from([...$(bytesCount - arr.length, () => 0), ...arr]);
+		else throw new Error(`unknown align ${align}`);
 	}
-	return input.toString('hex');
+	return input.toString('hex') + $(32 - input.length, () => '00').join('');
 }
 
 export function uintN(bitsCount: number = 256, input: number | BN = 0): string {
@@ -50,14 +53,14 @@ export function uintN(bitsCount: number = 256, input: number | BN = 0): string {
 	if (!input.isInteger()) throw new Error('input is not integer');
 	if (input.gte(new BN(2).pow(bitsCount))) throw new Error('is greater than max value');
 	const preRes = input.toString(16);
-	return comprehension(bitsCount / 8 - preRes.length, () => 0).join('') + preRes;
+	return $(bitsCount / 8 - preRes.length, () => 0).join('') + preRes;
 }
 
-export default function parseInput(type: SolType, input: any, align: Align = 'none') {
+export default function parseInput(type: SolType, input: any) {
 	if (type === 'address') return address(input);
 	if (/^bytes\d+$/.test(type)) {
 		const bytesCount = Number.parseInt(type.substr(5), 10);
-		return bytesN(bytesCount, input, align);
+		return bytesN(bytesCount, input);
 	}
 	if (/^uint\d+$/.test(type)) {
 		const bitsCount = Number.parseInt(type.substr(4), 10);
