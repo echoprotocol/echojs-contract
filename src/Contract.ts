@@ -22,6 +22,7 @@ export default class Contract {
 				throw new Error('invalid contractId format');
 			}
 		} else {
+			if (typeof contractId === 'undefined') throw new Error('contractId is undefined');
 			const contractPostfix: BN = typeof contractId === 'number' ? new BN(contractId) : contractId as BN;
 			if (contractPostfix.lte(0)) throw new Error('contractId is not positive');
 			if (contractPostfix.gt(MAX_CONTRACT_ID)) throw new Error('contractId is too large');
@@ -49,6 +50,10 @@ export default class Contract {
 				);
 			}
 		}
+	}
+
+	getAccountId() {
+		return this.accountId;
 	}
 
 	async setAccount(privateKey: PrivateKey) {

@@ -94,5 +94,6 @@ describe('parseInput', () => {
 				'0000000000000000000000000000000000617364',
 			));
 		});
+		it('get account id', () => strictEqual(contract!.getAccountId(), '1.2.1117'));
 	});
 });
