@@ -31,10 +31,22 @@ export function bytesN(bytesCount: number, output: string): Buffer {
 	return Buffer.from(output.substr(0, charsCount), 'hex');
 }
 
+export function uintN(bitsCount: number, output: string): number | BN {
+	if (!Number.isSafeInteger(bitsCount) || bitsCount <= 0 || bitsCount > 256 || bitsCount % 8 !== 0) {
+		throw new Error(`invalid type uint${bitsCount}`);
+	}
+	const preRes: BN = new BN(output, 16);
+	if (preRes.gte(new BN(2).pow(bitsCount))) throw new Error(`uint${bitsCount} overloaded`);
+	if (bitsCount < 50) return preRes.toNumber();
+	return preRes;
+}
+
 export default function parseOutput(output: string, type: SolType) {
 	if (type === 'bool') return bool(output);
 	if (type === 'address') return address(output);
 	const bytesNMatch = type.match(/^bytes(\d+)$/);
 	if (bytesNMatch) return bytesN(Number.parseInt(bytesNMatch[1], 10), output);
+	const uintNMatch = type.match(/^uint(\d+)$/);
+	if (uintNMatch) return uintN(Number.parseInt(uintNMatch[1], 10), output);
 	throw new Error(`parsing of ${type} is not implemented`);
 }

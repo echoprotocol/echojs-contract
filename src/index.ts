@@ -16,3 +16,15 @@ export {
 	AbiFunction,
 	getAccountId,
 };
+
+export function GET_DEFAULT_ABI_FUNCTION(): AbiFunction {
+	return {
+		constant: false,
+		inputs: [],
+		name: '',
+		outputs: [],
+		payable: false,
+		stateMutability: 'pure',
+		type: 'constructor',
+	};
+}
