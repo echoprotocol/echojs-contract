@@ -4,7 +4,7 @@ import SolType from '../../@types/sol-type';
 
 export function address(input: string): string {
 	const sourceAddress = input || '1.2.0';
-	if (!/^1\.(2|16)\.[1-9]\d*$/.test(sourceAddress)) throw new Error('invalid address format');
+	if (!/^1\.(2|16)\.(([1-9]\d*)|0)$/.test(sourceAddress)) throw new Error('invalid address format');
 	const preRes = new BN(sourceAddress.split('.')[2]).toString(16);
 	if (preRes.length > 38) throw new Error('invalid address id');
 	const isContract = sourceAddress.split('.')[1] === '16';
