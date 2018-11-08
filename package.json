@@ -1,11 +1,11 @@
 {
 	"name": "echojs-contract",
-	"version": "0.2.4",
+	"version": "0.2.5",
 	"description": "",
 	"main": "output/index.js",
 	"types": "output/index.d.ts",
 	"scripts": {
-		"build": "rm -r output && tsc",
+		"build": "rm -rf output && tsc",
 		"postinstall": "npm run build",
 		"pretest": "ts-node ./test/__pretest.ts",
 		"test": "NODE_ENV=test mocha -r ts-node/register test/index.ts --exit"
