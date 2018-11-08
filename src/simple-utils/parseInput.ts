@@ -79,8 +79,8 @@ export default function parseInputs(inputs: Array<{ type: SolType, arg: any }>):
 			const arr = arg as Array<any>;
 			post.push({
 				offsetIndex: result.length,
-				args: parseInputs([arr.length, ...arr].map((element) =>
-					({ type: dynamicArrMatch[1] as SolType, arg: element }))),
+				args: parseInputs([{ type: 'uint256', arg: arr.length }, ...arr.map((element) =>
+					({ type: dynamicArrMatch[1] as SolType, arg: element }))]),
 			});
 			result.push(''.padEnd(64, '0'));
 			continue;
@@ -89,7 +89,7 @@ export default function parseInputs(inputs: Array<{ type: SolType, arg: any }>):
 	}
 	for (let { offsetIndex, args } of post) {
 		result[offsetIndex] = parseInput('uint256', result.length * 32);
-		result.push(...$({ to: args.length / 64, step: 64 }, (i) => args.substr(i, 64)));
+		result.push(...$({ count: args.length / 64, step: 64 }, (i) => args.substr(i, 64)));
 	}
 	return result.join('');
 }
