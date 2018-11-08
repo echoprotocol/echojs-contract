@@ -3,6 +3,7 @@
 		"baseUrl": ".",
 		"declaration": true,
 		"module": "commonjs",
+		"moduleResolution": "node",
 		"outDir": "output",
 		"allowJs": false,
 		"paths": {
