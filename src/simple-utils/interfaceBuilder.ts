@@ -52,13 +52,18 @@ export default function buildInterface(contractName: string, abi: Array<AbiFunct
 			'\t\tbytecode: Buffer,\n' +
 			'\t\tabi: Array<AbiFunction>,\n' +
 			'\t\tprivateKey: PrivateKey,\n' +
-			`\t\targs: [\n\t\t\t${constructorAbi.inputs.map(({ type, name }) => `${getInputType(type)}, // ${type}${name ? ` (${name})` : ''}`).join('\n\t\t\t')},\n\t\t],\n` +
+			`\t\targs: [\n\t\t\t${constructorAbi.inputs
+				.map(({ type, name }) => `${getInputType(type)}, // ${type}${name ? ` (${name})` : ''}`)
+				.join('\n\t\t\t')},\n\t\t],\n` +
 			'\t): Promise<Contract>;\n';
 	}
 	for (let func of abi) {
-		const { name, inputs, outputs, type } = func;
+		const { name, inputs, outputs, type, payable } = func;
 		if (type !== 'function') continue;
-		const inputsArgs = inputs.map(({ type, name }) => `${name || '_'}: ${getInputType(type)}`).join(', ');
+		const inputsArgs = [
+			...inputs.map(({ type, name }) => `${name || '_'}: ${getInputType(type)}`),
+			...payable ? ['value: number'] : [],
+		].join(', ');
 		const outputsArr = (outputs || []).map(({ type }: { type: SolType }) => getOutputType(type));
 		const outputArgs = outputsArr.length === 0
 			? 'null'

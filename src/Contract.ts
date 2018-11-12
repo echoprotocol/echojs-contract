@@ -39,6 +39,8 @@ export default class Contract {
 			this[abiFunction.name as string] = async (...args: Array<any>) => {
 				const accountId = this.accountId || defaultAccountId;
 				const privateKey = this.accountPrivateKey || defaultPrivateKey;
+				const isPayable = abiFunction.payable;
+				const value = isPayable ? new BN(args.pop()).times(1e5).toNumber() : 0;
 				if (abiFunction.constant) return view(this.contractId, accountId, abiFunction, args);
 				if (!accountId) throw new Error('is not authorized');
 				return call(
@@ -47,6 +49,7 @@ export default class Contract {
 					privateKey as PrivateKey,
 					abiFunction,
 					args,
+					value,
 				);
 			}
 		}

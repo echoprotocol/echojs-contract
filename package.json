@@ -1,6 +1,6 @@
 {
 	"name": "echojs-contract",
-	"version": "0.2.8",
+	"version": "0.2.9",
 	"description": "",
 	"main": "output/index.js",
 	"types": "output/index.d.ts",

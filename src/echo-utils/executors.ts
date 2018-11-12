@@ -19,7 +19,12 @@ function parseResult(callResult: string, abiFunction: AbiFunction): any {
 }
 
 export async function call(
-	contractId: string, accountId: string, privateKey: PrivateKey, abiFunction: AbiFunction, args: Array<any>
+	contractId: string,
+	accountId: string,
+	privateKey: PrivateKey,
+	abiFunction: AbiFunction,
+	args: Array<any>,
+	value: number = 0,
 ): Promise<any> {
 	if (abiFunction.type !== 'function') throw new Error('is not a function');
 	const functionCode = getFunctionCode(abiFunction);
@@ -29,7 +34,7 @@ export async function call(
 		registrar: accountId,
 		receiver: contractId,
 		asset_id: '1.3.0',
-		value: 0,
+		value,
 		gasPrice: 0,
 		gas: 10e6,
 		code: functionCode + pureArgs,
