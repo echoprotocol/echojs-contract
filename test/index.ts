@@ -6,3 +6,4 @@ describe("connect", () => {
 });
 
 import("./dynamicArrays");
+import("./string");

@@ -85,6 +85,21 @@ export default function parseInputs(inputs: Array<{ type: SolType, arg: any }>):
 			result.push(''.padEnd(64, '0'));
 			continue;
 		}
+		if (type === 'string') {
+			if (typeof arg !== 'string') throw new Error('string expected');
+			const bytes = Array.from(Buffer.from(arg));
+			const arr = $({ to: bytes.length, step: 32 }, (i) => bytes.slice(i, i + 32));
+			if (arr[arr.length - 1].length < 32) {
+				arr[arr.length - 1] = [...arr[arr.length - 1], ...$(32 - arr[arr.length - 1].length, () => 0)];
+			}
+			post.push({
+				offsetIndex: result.length,
+				args: parseInputs([{ type: 'uint256', arg: bytes.length }, ...arr.map((element) =>
+					({ type: 'bytes32' as SolType, arg: Buffer.from(element) }))]),
+			});
+			result.push(''.padEnd(64, '0'));
+			continue;
+		}
 		result.push(parseInput(type, arg));
 	}
 	for (let { offsetIndex, args } of post) {

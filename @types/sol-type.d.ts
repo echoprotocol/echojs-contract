@@ -34,6 +34,7 @@ type SolType =
 	'bytes30'	|
 	'bytes31'	|
 	'bytes32'	|
+	'string'	|
 	'uint8'		|
 	'uint16'	|
 	'uint24'	|

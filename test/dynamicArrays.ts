@@ -1,3 +1,4 @@
+import "mocha";
 import { wif } from "config";
 import { readFile } from "fs-extra";
 
