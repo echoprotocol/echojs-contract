@@ -24,7 +24,6 @@ export async function call(
 	if (abiFunction.type !== 'function') throw new Error('is not a function');
 	const functionCode = getFunctionCode(abiFunction);
 	const pureArgs = parseInputs(abiFunction.inputs.map(({ type }, inputIndex) => ({ type, arg: args[inputIndex] })));
-	console.log(pureArgs);
 	const transaction = new TransactionBuilder();
 	transaction.add_type_operation('contract', {
 		registrar: accountId,
