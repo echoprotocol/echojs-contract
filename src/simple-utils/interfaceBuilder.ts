@@ -1,6 +1,6 @@
 import $ from "comprehension";
-import AbiFunction from "../../@types/abiFunction";
-import SolType from "../../@types/sol-type";
+import AbiFunction from "../../typing/abiFunction";
+import SolType from "../../typing/sol-type";
 
 const anyNumberTypes = ['uint', 'int']
 	.map((type) => $({ from: 8, to: 48, step: 8 }, (bitsCount) => type + bitsCount))

@@ -1,7 +1,7 @@
 import BN from 'bignumber.js';
 import comprehension from 'comprehension';
 
-import SolType from '../../@types/sol-type';
+import SolType from '../../typing/sol-type';
 
 export function bool(ouput: string) {
 	if (ouput === comprehension(64, () => 0).join('')) return false;

@@ -1,5 +1,5 @@
 node_modules/
-output/
+dist/
 package-lock.json
 test/contracts/output.json
 test/contracts/interfaces/

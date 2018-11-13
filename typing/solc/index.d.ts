@@ -1,4 +1,3 @@
-
 declare module "solc" {
 	
 	export function compile(input: string, optimise: number): {

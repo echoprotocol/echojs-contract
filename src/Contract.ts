@@ -1,7 +1,7 @@
 import BN from 'bignumber.js';
 import { PrivateKey, ChainStore } from 'echojs-lib';
 import { view, call } from './echo-utils/executors';
-import AbiFunction from '../@types/abiFunction';
+import AbiFunction from '../typing/abiFunction';
 import deploy from './echo-utils/deploy';
 
 const MAX_CONTRACT_ID = new BN(2).pow(19).minus(1);
@@ -86,4 +86,8 @@ export async function setDefaultAccount(privateKey: PrivateKey) {
 
 export function getDefaultAccountId() {
 	return defaultAccountId;
+}
+
+export function getDefaultPrivateKey(): PrivateKey | null {
+	return defaultPrivateKey;
 }

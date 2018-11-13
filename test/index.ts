@@ -11,3 +11,4 @@ describe("connect", () => {
 import("./dynamicArrays");
 import("./payable");
 import("./string");
+import("./defaultAccount");

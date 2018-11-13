@@ -1,28 +1,20 @@
 {
 	"compilerOptions": {
-		"baseUrl": ".",
-		"declaration": true,
-		"module": "commonjs",
-		"moduleResolution": "node",
-		"outDir": "output",
 		"allowJs": false,
-		"paths": {
-			"*": [
-				"./@types/*",
-			]
-		},
-		"rootDir": "src",
-		"strict": true,
-		"target": "es2017",
-		"typeRoots": [
-			"node_modules/@types",
-			"@types",
+		"baseUrl": "./",
+		"lib": [
+			"es2018",
 		],
-		"types": [
-			"node"
+		"moduleResolution": "node",
+		"noImplicitAny": true,
+		"outDir": "./dist",
+		"strict": true,
+		"typeRoots": [
+			"./node_modules/@types",
+			"./typing"
 		]
 	},
-	"exclude": [
-		"./test"
+	"include": [
+		"./src"
 	]
 }
