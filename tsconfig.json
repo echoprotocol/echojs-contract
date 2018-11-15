@@ -10,6 +10,11 @@
 		"noImplicitAny": true,
 		"outDir": "./dist",
 		"strict": true,
+		"paths": {
+			"*": [
+				"./typing/*"
+			]
+		},
 		"typeRoots": [
 			"./node_modules/@types",
 			"./typing"
@@ -19,6 +24,7 @@
 		]
 	},
 	"include": [
-		"./src"
+		"./src",
+		"./test"
 	]
 }

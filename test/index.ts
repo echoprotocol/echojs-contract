@@ -1,14 +1,22 @@
 import "mocha";
 import { connect } from "../src";
 
-describe("connect", () => {
-	it("successful", async function () {
-		this.timeout(5e3);
-		await connect("wss://echo-dev.io/ws");
-	});
-});
+it('init tests', () => null);
 
-import("./dynamicArrays");
-import("./payable");
-import("./string");
-import("./defaultAccount");
+if (!process.env.NO_TEST_CHAIN) {
+	describe("connect", () => {
+		it("successful", async function () {
+			this.timeout(5e3);
+			await connect("wss://echo-dev.io/ws");
+		});
+	});
+}
+
+import("./outputParser");
+
+if (!process.env.NO_TEST_CHAIN) {
+	import("./dynamicArrays");
+	import("./payable");
+	import("./string");
+	import("./defaultAccount");
+}

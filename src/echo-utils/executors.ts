@@ -3,7 +3,7 @@ import { TransactionBuilder, PrivateKey } from 'echojs-lib';
 import { Apis } from 'echojs-ws';
 import { keccak256 } from 'js-sha3';
 import parseInputs, { parseInput } from '../simple-utils/parseInput';
-import parseOutput from '../simple-utils/parseOutput';
+import { parseOutput } from '../simple-utils/parseOutput';
 import AbiFunction from '../../typing/abiFunction';
 
 function getFunctionCode(abiFunction: AbiFunction) {
