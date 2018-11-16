@@ -3,8 +3,9 @@ import connect from './echo-utils/connect';
 import deploy from './echo-utils/deploy';
 import getAccountId from './echo-utils/getAccountId';
 import buildInterface from './simple-utils/interfaceBuilder';
+import parseOutputs from './simple-utils/parseOutput';
 
-import AbiFunction from '../typing/abiFunction';
+import AbiFunction, { Arg } from '../typing/abiFunction';
 
 export default Contract;
 
@@ -16,8 +17,10 @@ export {
 	setDefaultAccount,
 	deploy,
 	AbiFunction,
+	Arg,
 	getAccountId,
 	buildInterface,
+	parseOutputs,
 };
 
 export function GET_DEFAULT_ABI_FUNCTION(): AbiFunction {

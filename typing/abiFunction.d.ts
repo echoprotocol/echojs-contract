@@ -3,6 +3,11 @@ import SolType from './sol-type';
 export type StateMutability = 'view' | 'nonpayable' | 'payable' | 'pure';
 export type FunctionType = 'constructor' | 'function' | 'event';
 
+export type Arg = {
+	name: string;
+	type: SolType;
+};
+
 export default interface AbiFunction {
 	constant?: boolean;
 	inputs: Array<{ name: string, type: SolType }>;
