@@ -15,6 +15,7 @@ if (!process.env.NO_TEST_CHAIN) {
 import("./outputParser");
 
 if (!process.env.NO_TEST_CHAIN) {
+	import("./getCurrentBlockNumber");
 	import("./dynamicArrays");
 	import("./payable");
 	import("./string");
