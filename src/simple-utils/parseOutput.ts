@@ -1,7 +1,7 @@
 import BN from 'bignumber.js';
 import $c from 'comprehension';
 
-import SolType from '../../typing/sol-type';
+import SolType from '../types/sol-type';
 import { Arg } from '../';
 
 export function bool(ouput: string) {

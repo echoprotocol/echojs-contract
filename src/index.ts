@@ -6,7 +6,7 @@ import getCurrentBlockNumber from './echo-utils/getCurrentBlockNumber';
 import buildInterface from './simple-utils/interfaceBuilder';
 import parseOutputs from './simple-utils/parseOutput';
 
-import AbiFunction, { Arg } from '../typing/abiFunction';
+import AbiFunction, { Arg } from './types/abiFunction';
 
 export default Contract;
 

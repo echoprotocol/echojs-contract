@@ -1,6 +1,6 @@
 import BN from 'bignumber.js';
 import $ from 'comprehension';
-import SolType from '../../typing/sol-type';
+import SolType from '../types/sol-type';
 
 export function address(input: string): string {
 	const sourceAddress = input || '1.2.0';

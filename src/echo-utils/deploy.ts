@@ -3,7 +3,7 @@ import { Apis } from "echojs-ws";
 import Contract, { getDefaultPrivateKey } from "../Contract";
 import { parseInput } from "../simple-utils/parseInput";
 import getAccountId from "./getAccountId";
-import AbiFunction from "../../typing/abiFunction";
+import AbiFunction from "../types/abiFunction";
 import { GET_DEFAULT_ABI_FUNCTION } from "../index";
 
 export default async function deploy(
