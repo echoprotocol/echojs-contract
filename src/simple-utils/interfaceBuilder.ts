@@ -62,7 +62,7 @@ export default function buildInterface(contractName: string, abi: Array<AbiFunct
 		if (type !== 'function') continue;
 		const inputsArgs = [
 			...inputs.map(({ type, name }, index) => `${name || `arg${index}`}: ${getInputType(type)}`),
-			...payable ? ['value: number'] : [],
+			`options?: { value?: number | BigNumber, asView?: boolean }`,
 		].join(', ');
 		const outputsArr = (outputs || []).map(({ type }: { type: SolType }) => getOutputType(type));
 		const outputArgs = outputsArr.length === 0

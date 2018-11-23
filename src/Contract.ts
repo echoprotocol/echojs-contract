@@ -1,4 +1,4 @@
-import BN from 'bignumber.js';
+import BN, { BigNumber } from 'bignumber.js';
 import { PrivateKey, ChainStore } from 'echojs-lib';
 import { view, call } from './echo-utils/executors';
 import AbiFunction from './types/abiFunction';
@@ -39,9 +39,10 @@ export default class Contract {
 			this[abiFunction.name as string] = async (...args: Array<any>) => {
 				const accountId = this.accountId || defaultAccountId;
 				const privateKey = this.accountPrivateKey || defaultPrivateKey;
-				const isPayable = abiFunction.payable;
-				const value = isPayable ? new BN(args.pop()).times(1e5).toNumber() : 0;
-				if (abiFunction.constant) return view(this.contractId, accountId, abiFunction, args);
+				const options: { value?: BigNumber | number, asView?: boolean } = args[abiFunction.inputs.length] || {};
+				if (typeof options.asView === 'boolean' ? options.asView : abiFunction.constant) {
+					return view(this.contractId, accountId, abiFunction, args);
+				}
 				if (!accountId) throw new Error('is not authorized');
 				return call(
 					this.contractId,
@@ -49,7 +50,7 @@ export default class Contract {
 					privateKey as PrivateKey,
 					abiFunction,
 					args,
-					value,
+					options.value instanceof BigNumber ? options.value.toNumber() : options.value || 0,
 				);
 			}
 		}

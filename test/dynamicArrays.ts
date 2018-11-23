@@ -36,4 +36,8 @@ describe("dynamic array", () => {
 
 	it("get element by index", async () => strictEqual(await contract.getByIndex(new BN(1)), testArray[1]));
 
+	it('asView', async () => strictEqual(await contract.setArray([1, 2, 3], { asView: true }), null));
+
+	it('asView not change state', async () => strictEqual(await contract.getByIndex(new BN(1)), testArray[1]));
+
 });
