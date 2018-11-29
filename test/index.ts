@@ -13,6 +13,7 @@ if (!process.env.NO_TEST_CHAIN) {
 }
 
 import("./outputParser");
+import("./parseInputs");
 
 if (!process.env.NO_TEST_CHAIN) {
 	import("./getCurrentBlockNumber");

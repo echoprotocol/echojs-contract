@@ -45,6 +45,7 @@ export async function call(
 	const transactionResultId = await transaction.broadcast().then((res) => res[0].trx.operation_results[0][1]);
 	const callResult = await Apis.instance().dbApi().exec('get_contract_result', [transactionResultId])
 		.then((res) => res.exec_res.output);
+	if (callResult === undefined && abiFunction.outputs!.length > 0) throw new Error('Transaction failed');
 	return parseResult(callResult as string, abiFunction);
 }
 

@@ -5,6 +5,7 @@ import getAccountId from './echo-utils/getAccountId';
 import getCurrentBlockNumber from './echo-utils/getCurrentBlockNumber';
 import buildInterface from './simple-utils/interfaceBuilder';
 import parseOutputs from './simple-utils/parseOutput';
+import parseInputs from "./simple-utils/parseInput";
 
 import AbiFunction, { Arg } from './types/abiFunction';
 
@@ -22,6 +23,7 @@ export {
 	getAccountId,
 	buildInterface,
 	parseOutputs,
+	parseInputs,
 	getCurrentBlockNumber,
 };
 
