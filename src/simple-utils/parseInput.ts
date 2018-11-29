@@ -1,5 +1,5 @@
 import BN from 'bignumber.js';
-import $ from 'comprehension';
+import $c from 'comprehension';
 import SolType from '../types/sol-type';
 
 export function address(input: string): string {
@@ -9,9 +9,9 @@ export function address(input: string): string {
 	if (preRes.length > 38) throw new Error('invalid address id');
 	const isContract = sourceAddress.split('.')[1] === '16';
 	return [
-		$(25, () => 0).join(''),
+		$c(25, () => 0).join(''),
 		isContract ? '1' : '0',
-		$(38 - preRes.length, () => 0).join(''),
+		$c(38 - preRes.length, () => 0).join(''),
 		preRes,
 	].join('');
 }
@@ -23,7 +23,7 @@ export function bytesN(bytesCount: number, input?: string | Buffer | { value: st
 	if (!Number.isSafeInteger(bytesCount)) throw new Error('bytes count is not a integer');
 	const align: Align = (input as { value: string | Buffer, align: Align }).align || 'none';
 	input = (input as { value: string | Buffer, align: Align }).value || input;
-	if (!input) return $(bytesCount, () => 0).join('');
+	if (!input) return $c(bytesCount, () => 0).join('');
 	if (typeof input === 'string') {
 		if (/^0x([a-f\d]{2}){1,32}$/.test(input)) input = Buffer.from(input.substr(2), 'hex');
 		else input = Buffer.from(input);
@@ -33,11 +33,11 @@ export function bytesN(bytesCount: number, input?: string | Buffer | { value: st
 		if (input.length > bytesCount) throw new Error('buffer is too large');
 		const arr = Array.from(input);
 		if (align === 'none') throw new Error('buffer is too short');
-		if (align === 'left') input = Buffer.from([...arr, ...$(bytesCount - arr.length, () => 0)]);
-		else if (align === 'right') input = Buffer.from([...$(bytesCount - arr.length, () => 0), ...arr]);
+		if (align === 'left') input = Buffer.from([...arr, ...$c(bytesCount - arr.length, () => 0)]);
+		else if (align === 'right') input = Buffer.from([...$c(bytesCount - arr.length, () => 0), ...arr]);
 		else throw new Error(`unknown align ${align}`);
 	}
-	return input.toString('hex') + $(32 - input.length, () => '00').join('');
+	return input.toString('hex') + $c(32 - input.length, () => '00').join('');
 }
 
 export function uintN(bitsCount: number = 256, input: number | BN = 0): string {
@@ -53,11 +53,22 @@ export function uintN(bitsCount: number = 256, input: number | BN = 0): string {
 	if (!input.isInteger()) throw new Error('input is not integer');
 	if (input.gte(new BN(2).pow(bitsCount))) throw new Error('is greater than max value');
 	const preRes = input.toString(16);
-	return $(64 - preRes.length, () => 0).join('') + preRes;
+	return $c(64 - preRes.length, () => 0).join('') + preRes;
+}
+
+export function bool(input: boolean): string {
+	if (typeof input !== 'boolean') {
+		throw {
+			message: 'input is not a boolean',
+			input,
+		};
+	};
+	return input ? `${$c(63, () => 0).join('')}1` : $c(64, () => 0).join('');
 }
 
 export function parseInput(type: SolType, input: any): string {
 	if (type === 'address') return address(input);
+	if (type === 'bool') return bool(input);
 	if (/^bytes\d+$/.test(type)) {
 		const bytesCount = Number.parseInt(type.substr(5), 10);
 		return bytesN(bytesCount, input);
@@ -88,9 +99,9 @@ export default function parseInputs(inputs: Array<{ type: SolType, arg: any }>):
 		if (type === 'string') {
 			if (typeof arg !== 'string') throw new Error('string expected');
 			const bytes = Array.from(Buffer.from(arg));
-			const arr = $({ to: bytes.length, step: 32 }, (i) => bytes.slice(i, i + 32));
+			const arr = $c({ to: bytes.length, step: 32 }, (i) => bytes.slice(i, i + 32));
 			if (arr[arr.length - 1].length < 32) {
-				arr[arr.length - 1] = [...arr[arr.length - 1], ...$(32 - arr[arr.length - 1].length, () => 0)];
+				arr[arr.length - 1] = [...arr[arr.length - 1], ...$c(32 - arr[arr.length - 1].length, () => 0)];
 			}
 			post.push({
 				offsetIndex: result.length,
@@ -104,7 +115,7 @@ export default function parseInputs(inputs: Array<{ type: SolType, arg: any }>):
 	}
 	for (let { offsetIndex, args } of post) {
 		result[offsetIndex] = parseInput('uint256', result.length * 32);
-		result.push(...$({ count: args.length / 64, step: 64 }, (i) => args.substr(i, 64)));
+		result.push(...$c({ count: args.length / 64, step: 64 }, (i) => args.substr(i, 64)));
 	}
 	return result.join('');
 }
