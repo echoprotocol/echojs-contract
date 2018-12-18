@@ -201,14 +201,14 @@ export function encodeArgument(value, type) {
 		const bitsCount = Number.parseInt(signedIntegerMatch[1], 10);
 		return encodeInteger(bitsCount, value);
 	}
-	if (value === 'bool') return encodeBool(value);
-	if (value === 'address') return encodeAddress(value);
-	if (value === 'string') return encodeString(value);
+	if (type === 'bool') return encodeBool(value);
+	if (type === 'address') return encodeAddress(value);
+	if (type === 'string') return encodeString(value);
 	throw new Error(`unknown type ${type}`);
 }
 
 /**
- * @param {Array.<{ value: *, type: SolType }>} input
+ * @param {Array.<{ value: *, type: SolType }>|{ value: *, type: SolType }} input
  * @returns {string}
  */
 export function encode(input) {
