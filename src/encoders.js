@@ -85,12 +85,13 @@ export function encodeAddress(address) {
 
 /**
  * @param {number} bytesCount
- * @param {Buffer|string|{value:Buffer|string,encoding:Encoding,align:'left'|'right'|'none'}} input
+ * @param {Buffer|string|{value:Buffer|string,encoding:Encoding?,align:'left'|'right'|'none'}} input
  * @return {string}
  */
 export function encodeStaticBytes(bytesCount, input) {
 	const defaultEncoding = 'hex';
 	const defaultAlign = 'none';
+	// typeof is uncovered. see https://github.com/gotwarlost/istanbul/issues/582
 	if (Buffer.isBuffer(input) || typeof input !== 'object') {
 		input = { value: input, encoding: defaultEncoding, align: defaultAlign };
 	}
@@ -122,29 +123,34 @@ export function encodeStaticBytes(bytesCount, input) {
 /** @typedef {{ type: ('dynamic'|'static'), code: Array.<string|_ArrayCode>, length: number }} _ArrayCode */
 
 /**
- * @param {string|Buffer} value
- * @param {Encoding} encoding
+ * @param {string|Buffer|{ value:(string|Buffer), encoding:Encoding }} input
  * @returns {_ArrayCode}
  */
-export function encodeDynamicBytes(value, encoding = 'hex') {
-	if (typeof value === 'string') value = Buffer.from(value, encoding);
-	const partsCount = Math.ceil(value.length / 32);
+export function encodeDynamicBytes(input) {
+	const defaultEncoding = 'hex';
+	// typeof is uncovered. see https://github.com/gotwarlost/istanbul/issues/582
+	if (Buffer.isBuffer(input) || typeof input !== 'object') {
+		input = { value: input, encoding: defaultEncoding };
+	}
+	input.encoding = input.encoding || defaultEncoding;
+	if (typeof input.value === 'string') input.value = Buffer.from(input.value, input.encoding);
+	const partsCount = Math.ceil(input.value.length / 32);
 	/** @type {Array<string>} */
-	const code = $c({ count: partsCount, step: 32 }, (i) => value.slice(i, i + 32).toString('hex'));
+	const code = $c({ count: partsCount, step: 32 }, (i) => input.value.slice(i, i + 32).toString('hex'));
 	const lastCodeIndex = partsCount - 1;
 	if (code[lastCodeIndex].length !== 64) {
-		code[lastCodeIndex] = $c(64 - code[lastCodeIndex].length, () => '0').join('') + code[lastCodeIndex];
+		code[lastCodeIndex] = code[lastCodeIndex] + $c(64 - code[lastCodeIndex].length, () => '0').join('');
 	}
-	return { type: 'dynamic', length: value.length, code };
+	return { type: 'dynamic', length: input.value.length, code };
 }
 
 /**
- * @param {string} value
- * @param {Encoding} encoding
+ * @param {string|{ value:string, encoding:Encoding }} input
  * @returns {_ArrayCode}
  */
-export function encodeString(value, encoding = 'utf8') {
-	return encodeDynamicBytes(value, encoding);
+export function encodeString(input) {
+	if (typeof input === 'string') input = { value: input, encoding: 'utf8' };
+	return encodeDynamicBytes(input);
 }
 
 /**
@@ -164,8 +170,8 @@ export function encodeDynamicArray(value, type) {
  * @returns {_ArrayCode}
  */
 export function encodeStaticArray(value, type, length) {
-	if (length !== value.length) throw new Error('invalid array elements count');
 	if (!Array.isArray(value)) throw new Error('value is not an array');
+	if (length !== value.length) throw new Error('invalid array elements count');
 	return { type: 'static', length, code: value.map((element) => encodeArgument(element, type)) };
 }
 
@@ -204,6 +210,7 @@ export function encodeArgument(value, type) {
 	if (type === 'bool') return encodeBool(value);
 	if (type === 'address') return encodeAddress(value);
 	if (type === 'string') return encodeString(value);
+	if (type === 'bytes') return encodeDynamicBytes(value);
 	throw new Error(`unknown type ${type}`);
 }
 
@@ -211,7 +218,7 @@ export function encodeArgument(value, type) {
  * @param {Array.<{ value: *, type: SolType }>|{ value: *, type: SolType }} input
  * @returns {string}
  */
-export function encode(input) {
+export default function encode(input) {
 	if (!Array.isArray(input)) input = [input];
 	let result = input.map(({ value, type }) => encodeArgument(value, type));
 	let post = [];

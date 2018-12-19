@@ -2,9 +2,9 @@ import 'mocha';
 import { strictEqual, throws } from 'assert';
 import BigNumber from 'bignumber.js';
 import $c from 'comprehension';
-import { encode } from '../src/encoders';
+import encode from '../../src/encoders';
 
-describe('encoders', () => {
+describe('encode', () => {
 
 	describe('boolean', () => {
 		it('not a boolean', () => throws(
@@ -99,7 +99,10 @@ describe('encoders', () => {
 		));
 		it('invalid format', () => {
 			for (const invalidAddress of ['.2.0', '116.123', '1.16123', '1.16.', '1.16.0123']) {
-				throws(() => encode({ type: 'address', value: invalidAddress }), { message: 'invalid address format' });
+				throws(() => encode({
+					type: 'address',
+					value: invalidAddress,
+				}), { message: 'invalid address format' });
 			}
 		});
 		it('objectId gt 2**152', () => throws(
@@ -161,7 +164,7 @@ describe('encoders', () => {
 			{ test: 'utf8', input: { value: '\x01#E\0', encoding: 'utf8' } },
 			{ test: 'utf16le', input: { value: '⌁E', encoding: 'utf16le' } },
 		]) it(test, () => strictEqual(
-			encode({ type: 'bytes4', value:  input }),
+			encode({ type: 'bytes4', value: input }),
 			'0000000000000000000000000000000000000000000000000000000001234500',
 		));
 	});
@@ -192,4 +195,62 @@ describe('encoders', () => {
 			'0000000000000000000000000000000000000000000000000000000000000006',
 		].join('')));
 	});
+
+	describe('string', () => {
+		it('default encoding', () => strictEqual(encode({ type: 'string', value: '0af' }), [
+			'0000000000000000000000000000000000000000000000000000000000000020',
+			'0000000000000000000000000000000000000000000000000000000000000003',
+			'3061660000000000000000000000000000000000000000000000000000000000',
+		].join('')));
+		it('set encoding', () => strictEqual(encode({
+			type: 'string',
+			value: { value: '\u2301\u6745', encoding: 'utf16le' },
+		}), [
+			'0000000000000000000000000000000000000000000000000000000000000020',
+			'0000000000000000000000000000000000000000000000000000000000000004',
+			'0123456700000000000000000000000000000000000000000000000000000000',
+		].join('')));
+	});
+
+	describe('bytes', () => {
+		it('as buffer', () => strictEqual(encode({ type: 'bytes', value: Buffer.from([0x12, 0x34, 0x56]) }), [
+			'0000000000000000000000000000000000000000000000000000000000000020',
+			'0000000000000000000000000000000000000000000000000000000000000003',
+			'1234560000000000000000000000000000000000000000000000000000000000',
+		].join('')));
+		it('as object without encoding', () => strictEqual(encode({
+			type: 'bytes',
+			value: { value: 'abcdef' },
+		}), [
+			'0000000000000000000000000000000000000000000000000000000000000020',
+			'0000000000000000000000000000000000000000000000000000000000000003',
+			'abcdef0000000000000000000000000000000000000000000000000000000000',
+		].join('')));
+		it('strict size', () => strictEqual(encode({
+			type: 'bytes', value: '0123456789abcdeffedcba98765432100123456789abcdeffedcba9876543210',
+		}), [
+			'0000000000000000000000000000000000000000000000000000000000000020',
+			'0000000000000000000000000000000000000000000000000000000000000020',
+			'0123456789abcdeffedcba98765432100123456789abcdeffedcba9876543210',
+		].join('')));
+	});
+
+	describe('dynamic array', () => {
+		it('is not an array', () => throws(
+			() => encode({ type: 'uint8[]', value: 'not_an_array' }),
+			{ message: 'value is not an array' },
+		));
+	});
+
+	describe('static array', () => {
+		for (const { test, value } of [
+			{ test: 'value is not an array', value: 'not_an_array' },
+			{ test: 'invalid array elements count', value: [1, 2] },
+		]) it(test, () => throws(() => encode({ type: 'uint8[4]', value }), { message: test }));
+	});
+
+	it('invalid type', () => throws(
+		() => encode({ type: 'invalid_type', value: 123 }),
+		{ message: 'unknown type invalid_type' },
+	));
 });
