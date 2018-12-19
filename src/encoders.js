@@ -220,28 +220,37 @@ export function encodeArgument(value, type) {
  */
 export default function encode(input) {
 	if (!Array.isArray(input)) input = [input];
+	/** @type {Array.<(string|{type: (string), code: Array<string|{type: (string), code: Array<string|_ArrayCode>, length: number}>, length: number}|number)>} */
 	let result = input.map(({ value, type }) => encodeArgument(value, type));
 	let post = [];
 	do {
 		for (const { link, arr, length } of post) {
-			result[link] = encodeUnsignedInteger(256, result.length * 32);
+			// result[link] = encodeUnsignedInteger(256, result.length * 32);
+			result[link] = result.length;
 			result.push(encodeUnsignedInteger(256, length), ...arr);
 		}
 		post = [];
 		for (let i = 0; i < result.length; i++) {
-			if (typeof result[i] === 'string') continue;
+			if (['string', 'number'].includes(typeof result[i])) continue;
 			if (result[i].type === 'static') {
+				const shiftLength = result[i].code.length - 1;
 				result = [
 					...result.slice(0, i),
 					...result[i].code,
 					...result.slice(i + 1),
 				];
+				for (const postElement of post) {
+					if (postElement.link > i) postElement.link += shiftLength;
+				}
+				result = result.map((element) =>
+					(typeof element === 'number') && element > i ? element + shiftLength : element);
 				i -= 1;
 				continue;
 			}
 			post.push({ link: i, arr: result[i].code, length: result[i].length });
-			result[i] = null;
+			result[i] = undefined;
 		}
 	} while (post.length > 0);
-	return result.join('');
+	return result.map((element) => typeof element === 'number' ? encodeUnsignedInteger(256, element * 32) : element)
+		.join('');
 }
