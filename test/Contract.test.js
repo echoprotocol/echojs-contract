@@ -124,5 +124,9 @@ describe('Contract', () => {
 				'0000000000000000000000000000000000000000000000000000000000000008',
 			].join(''));
 		});
+		it('invalid method arguments count', () => {
+			const contract = new Contract([{ type: 'function', name: 'qwe', inputs: [] }]);
+			throws(() => contract.methods.qwe(123), { message: 'invalid arguments count' });
+		});
 	});
 });
