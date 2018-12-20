@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import $c from 'comprehension';
 import { toTwosComplementRepresentation } from './utils/number-representations';
+import { checkIntegerSize } from './utils/solidity-utils';
 
 /**
  * @param {boolean} value
@@ -9,14 +10,6 @@ import { toTwosComplementRepresentation } from './utils/number-representations';
 export function encodeBool(value) {
 	if (typeof value !== 'boolean') throw new Error('value is not a boolean');
 	return $c(63, () => '0').join('') + (value ? '1' : '0');
-}
-
-function checkIntegerSize(bitsCount) {
-	if (typeof bitsCount !== 'number') throw new Error('bits count is not a number');
-	if (bitsCount <= 0) throw new Error('bits count is not positive');
-	if (bitsCount > 256) throw new Error('bits count is greater than 256');
-	if (!Number.isSafeInteger(bitsCount)) throw new Error('bits count is not a integer');
-	if (bitsCount % 8 !== 0) throw new Error('bits count is not divisible to 8');
 }
 
 /**
