@@ -1,16 +1,18 @@
 import 'mocha';
-import { deepStrictEqual, notStrictEqual, strictEqual, throws } from 'assert';
+import { deepStrictEqual, notStrictEqual, strictEqual } from 'assert';
+import { expect } from 'chai';
 import $c from 'comprehension';
 import Contract from '../src/Contract';
 
 describe('Contract', () => {
 	describe('initializing', () => {
-		// noinspection JSCheckFunctionSignatures
-		it('abi is not an array', () => throws(() => new Contract('not_an_array'), { message: 'abi is not an array' }));
-		it('function without a name', () => throws(
-			() => new Contract([{ type: 'function' }]),
-			{ message: 'function has no name' },
-		));
+		it('abi is not an array', () => {
+			// noinspection JSCheckFunctionSignatures
+			expect(() => new Contract('not_an_array')).to.throw(Error, 'abi is not an array');
+		});
+		it('function without a name', () => expect(() => new Contract([
+			{ type: 'function' },
+		])).to.throw(Error, 'function has no name'));
 		it(
 			'type not equals to "function"',
 			() => deepStrictEqual(new Contract([{ type: 'not_a_function' }]).methods, {}),
@@ -126,7 +128,7 @@ describe('Contract', () => {
 		});
 		it('invalid method arguments count', () => {
 			const contract = new Contract([{ type: 'function', name: 'qwe', inputs: [] }]);
-			throws(() => contract.methods.qwe(123), { message: 'invalid arguments count' });
+			expect(() => contract.methods.qwe(123)).to.throw(Error, 'invalid arguments count');
 		});
 	});
 });
