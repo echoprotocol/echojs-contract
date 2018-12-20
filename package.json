@@ -20,11 +20,13 @@
 		"comprehension": "^1.1.2"
 	},
 	"devDependencies": {
+		"@types/chai": "^4.1.7",
 		"@types/mocha": "^5.2.5",
 		"babel-core": "^6.26.3",
 		"babel-polyfill": "^6.26.0",
 		"babel-preset-latest": "^6.24.1",
 		"babel-preset-stage-3": "^6.24.1",
+		"chai": "^4.2.0",
 		"mocha": "^5.2.0",
 		"nyc": "^11.7.1"
 	}

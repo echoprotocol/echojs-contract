@@ -27,6 +27,9 @@ function toBigInteger(value) {
 	if (typeof value === 'number') {
 		if (value > Number.MAX_SAFE_INTEGER) throw new Error('loss of accuracy, use bignumber.js');
 		value = new BigNumber(value);
+	} else if (typeof value === 'string') {
+		value = new BigNumber(value);
+		if (!value.isFinite()) throw new Error('fail to convert string to BigNumber');
 	}
 	if (!BigNumber.isBigNumber(value)) throw new Error('value is not a number');
 	if (!value.isInteger()) throw new Error('value is not a integer');
@@ -43,7 +46,7 @@ export function encodeUnsignedInteger(bitsCount, value) {
 	value = toBigInteger(value);
 	if (value.isNegative()) throw new Error('value is negative');
 	if (value.gte(new BigNumber(2).pow(bitsCount))) {
-		throw new Error(`uint${bitsCount} overloading`);
+		throw new Error(`uint${bitsCount} overflow`);
 	}
 	const preRes = value.toString(16);
 	return $c(64 - preRes.length, () => '0').join('') + preRes;
@@ -57,7 +60,7 @@ export function encodeUnsignedInteger(bitsCount, value) {
 export function encodeInteger(bitsCount, value) {
 	checkIntegerSize(bitsCount);
 	value = toBigInteger(value);
-	if (value.abs().gte(new BigNumber(2).pow(bitsCount - 1))) throw new Error(`int${bitsCount} overloading`);
+	if (value.abs().gte(new BigNumber(2).pow(bitsCount - 1))) throw new Error(`int${bitsCount} overflow`);
 	const twosComplementRepresentation = toTwosComplementRepresentation(value, bitsCount);
 	return encodeUnsignedInteger(bitsCount, twosComplementRepresentation);
 }
@@ -239,9 +242,6 @@ export default function encode(input) {
 					...result[i].code,
 					...result.slice(i + 1),
 				];
-				for (const postElement of post) {
-					if (postElement.link > i) postElement.link += shiftLength;
-				}
 				result = result.map((element) =>
 					(typeof element === 'number') && element > i ? element + shiftLength : element);
 				i -= 1;
