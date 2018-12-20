@@ -6,7 +6,7 @@
 	"scripts": {
 		"build": "babel src --out-dir dist --copy-files",
 		"posttest": "nyc report --reporter=text-summary --reporter=html",
-		"prepublish": "npm run test && npm run build",
+		"prepublishOnly": "npm run test && npm run build",
 		"test": "nyc npx mocha --require babel-core/register --require babel-polyfill"
 	},
 	"repository": {
@@ -22,12 +22,14 @@
 		"lodash": "^4.17.11"
 	},
 	"devDependencies": {
+		"@types/chai": "^4.1.7",
 		"@types/lodash": "^4.14.119",
 		"@types/mocha": "^5.2.5",
 		"babel-core": "^6.26.3",
 		"babel-polyfill": "^6.26.0",
 		"babel-preset-latest": "^6.24.1",
 		"babel-preset-stage-3": "^6.24.1",
+		"chai": "^4.2.0",
 		"mocha": "^5.2.0",
 		"nyc": "^11.7.1"
 	}
