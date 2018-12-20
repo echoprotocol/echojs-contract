@@ -16,7 +16,7 @@ export function toDirectRepresentation(number, bitsCount) {
 	checkBitsCount(bitsCount);
 	if (typeof number === 'number') number = new BigNumber(number);
 	const abs = number.abs();
-	if (abs.gte(new BigNumber(2).pow(bitsCount - 1))) throw new Error(`int${bitsCount} overloaded`);
+	if (abs.gte(new BigNumber(2).pow(bitsCount - 1))) throw new Error(`int${bitsCount} overflow`);
 	return number.isNegative() ? abs.plus(new BigNumber(2).pow(bitsCount - 1)) : abs;
 }
 
