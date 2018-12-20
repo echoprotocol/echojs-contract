@@ -6,7 +6,7 @@
 	"scripts": {
 		"build": "babel src --out-dir dist --copy-files",
 		"posttest": "nyc report --reporter=text-summary --reporter=html",
-		"prepublish": "npm run test && npm run build",
+		"prepublishOnly": "npm run test && npm run build",
 		"test": "nyc npx mocha --require babel-core/register --require babel-polyfill"
 	},
 	"repository": {
