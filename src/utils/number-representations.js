@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import { toBigInteger } from './converters';
 
 /**
  * @param {number|BigNumber} number
@@ -6,8 +7,9 @@ import BigNumber from 'bignumber.js';
  * @returns {BigNumber}
  */
 export function toDirectRepresentation(number, bitsCount) {
-	if (bitsCount < 0 || !Number.isSafeInteger(bitsCount)) throw new Error('bits count is not uint53');
-	if (typeof number === 'number') number = new BigNumber(number);
+	if (!Number.isSafeInteger(bitsCount)) throw new Error('bits count is not a safe integer');
+	if (bitsCount <= 0) throw new Error('bits count is not positive');
+	number = toBigInteger(number);
 	const abs = number.abs();
 	if (abs.gte(new BigNumber(2).pow(bitsCount - 1))) throw new Error(`int${bitsCount} overflow`);
 	return number.isNegative() ? abs.plus(new BigNumber(2).pow(bitsCount - 1)) : abs;
@@ -19,7 +21,7 @@ export function toDirectRepresentation(number, bitsCount) {
  * @returns {BigNumber}
  */
 export function toOnesComplementRepresentation(number, bitsCount) {
-	if (typeof number === 'number') number = new BigNumber(number);
+	number = toBigInteger(number);
 	const directRepresentation = toDirectRepresentation(number, bitsCount);
 	if (!number.isNegative()) return directRepresentation;
 	return new BigNumber(2).pow(bitsCount - 1)
@@ -34,7 +36,7 @@ export function toOnesComplementRepresentation(number, bitsCount) {
  * @returns {BigNumber}
  */
 export function toTwosComplementRepresentation(number, bitsCount) {
-	if (typeof number === 'number') number = new BigNumber(number);
+	number = toBigInteger(number);
 	const onesComplementRepresentation = toOnesComplementRepresentation(number, bitsCount);
 	if (!number.isNegative()) return onesComplementRepresentation;
 	return onesComplementRepresentation.plus(1);

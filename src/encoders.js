@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 import $c from 'comprehension';
+import { toBigInteger } from './utils/converters';
 import { toTwosComplementRepresentation } from './utils/number-representations';
 
 /**
@@ -17,23 +18,6 @@ function checkIntegerSize(bitsCount) {
 	if (bitsCount > 256) throw new Error('bits count is greater than 256');
 	if (!Number.isSafeInteger(bitsCount)) throw new Error('bits count is not a integer');
 	if (bitsCount % 8 !== 0) throw new Error('bits count is not divisible to 8');
-}
-
-/**
- * @param {number|BigNumber} value
- * @returns {BigNumber}
- */
-function toBigInteger(value) {
-	if (typeof value === 'number') {
-		if (value > Number.MAX_SAFE_INTEGER) throw new Error('loss of accuracy, use bignumber.js');
-		value = new BigNumber(value);
-	} else if (typeof value === 'string') {
-		value = new BigNumber(value);
-		if (!value.isFinite()) throw new Error('fail to convert string to BigNumber');
-	}
-	if (!BigNumber.isBigNumber(value)) throw new Error('value is not a number');
-	if (!value.isInteger()) throw new Error('value is not a integer');
-	return value;
 }
 
 /**
