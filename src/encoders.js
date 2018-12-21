@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 import $c from 'comprehension';
+import { toBigInteger } from './utils/converters';
 import { toTwosComplementRepresentation } from './utils/number-representations';
 import { checkIntegerSize } from './utils/solidity-utils';
 
@@ -10,23 +11,6 @@ import { checkIntegerSize } from './utils/solidity-utils';
 export function encodeBool(value) {
 	if (typeof value !== 'boolean') throw new Error('value is not a boolean');
 	return $c(63, () => '0').join('') + (value ? '1' : '0');
-}
-
-/**
- * @param {number|BigNumber} value
- * @returns {BigNumber}
- */
-function toBigInteger(value) {
-	if (typeof value === 'number') {
-		if (value > Number.MAX_SAFE_INTEGER) throw new Error('loss of accuracy, use bignumber.js');
-		value = new BigNumber(value);
-	} else if (typeof value === 'string') {
-		value = new BigNumber(value);
-		if (!value.isFinite()) throw new Error('fail to convert string to BigNumber');
-	}
-	if (!BigNumber.isBigNumber(value)) throw new Error('value is not a number');
-	if (!value.isInteger()) throw new Error('value is not a integer');
-	return value;
 }
 
 /**

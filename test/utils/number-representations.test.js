@@ -9,10 +9,12 @@ import {
 
 describe('number representations', () => {
 	describe('direct representation', () => {
-		it('bits count is gte MAX_SAFE_INTEGER', () => {
-			expect(() => {
-				toDirectRepresentation(123, Number.MAX_SAFE_INTEGER * 2);
-			}).to.throw(Error, 'bits count is not uint53');
+		for (const { test, bitsCount, error } of [
+			{ test: 'bits count is not a safe integer', bitsCount: Number.MAX_SAFE_INTEGER * 2 },
+			{ test: 'bits count is negative', bitsCount: -12, error: 'bits count is not positive' },
+			{ test: 'bits count is equals to zero', bitsCount: -12, error: 'bits count is not positive' },
+		]) it(test, () => {
+			expect(() => toDirectRepresentation(123, bitsCount)).to.throw(Error, error || test);
 		});
 		it('overflow', () => {
 			expect(() => toDirectRepresentation(new BigNumber(2).pow(8).plus(123), 8)).to.throw(Error, 'int8 overflow');

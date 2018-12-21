@@ -10,7 +10,7 @@ import encode from './encoders';
  * @property {function():string} getCode
  */
 
-export default class Contract {
+class Contract {
 
 	/** @returns {Array.<AbiMethod>} */
 	get abi() {
@@ -69,3 +69,5 @@ export default class Contract {
 	}
 
 }
+
+export default Contract;
