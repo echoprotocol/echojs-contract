@@ -6,7 +6,7 @@ import { fromTwosComplementRepresentation } from './utils/number-representations
 export function decodeBool(value) {
 	if (value === $c(64, () => '0').join('')) return false;
 	if (value === $c(63, () => '0').join('') + '1') return true;
-	throw new Error(`unable to decode bool`);
+	throw new Error('unable to decode bool');
 }
 
 export function decodeUnsignedInteger(bitsCount, value) {
