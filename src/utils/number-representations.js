@@ -20,9 +20,17 @@ export function toDirectRepresentation(number, bitsCount) {
 	return number.isNegative() ? abs.plus(new BigNumber(2).pow(bitsCount - 1)) : abs;
 }
 
-/** @param {BigNumber} representation */
-function checkRepresentation(representation) {
+/**
+ * @param {BigNumber} representation
+ * @param {number} bitsCount
+ */
+function checkRepresentation(representation, bitsCount) {
+	checkBitsCount(bitsCount);
 	if (!BigNumber.isBigNumber(representation)) throw new Error('representation is not a BigNumber');
+	if (representation.isNegative()) throw new Error('representation is negative');
+	if (representation.gte(new BigNumber(2).pow(bitsCount))) {
+		throw new Error(`${bitsCount}-bit representation overflow`);
+	}
 }
 
 /**
@@ -31,11 +39,7 @@ function checkRepresentation(representation) {
  * @returns {BigNumber}
  */
 export function fromDirectRepresentation(directRepresentation, bitsCount) {
-	checkBitsCount(bitsCount);
-	checkRepresentation(directRepresentation);
-	if (directRepresentation.gte(new BigNumber(2).pow(bitsCount))) {
-		throw new Error(`${bitsCount}-bit representation overloaded`);
-	}
+	checkRepresentation(directRepresentation, bitsCount);
 	const postMaxValue = new BigNumber(2).pow(bitsCount - 1);
 	const isNegative = directRepresentation.gte(postMaxValue);
 	const abs = isNegative ? directRepresentation.minus(postMaxValue) : directRepresentation;
@@ -63,7 +67,7 @@ export function toOnesComplementRepresentation(number, bitsCount) {
  * @returns {BigNumber}
  */
 export function fromOnesComplementRepresentation(onesComplementRepresentation, bitsCount) {
-	checkRepresentation(onesComplementRepresentation);
+	checkRepresentation(onesComplementRepresentation, bitsCount);
 	const isNegative = onesComplementRepresentation.gte(new BigNumber(2).pow(bitsCount - 1));
 	return isNegative ?
 		fromDirectRepresentation(
@@ -95,7 +99,7 @@ export function toTwosComplementRepresentation(number, bitsCount) {
  * @returns {BigNumber}
  */
 export function fromTwosComplementRepresentation(twosComplementRepresentation, bitsCount) {
-	checkRepresentation(twosComplementRepresentation);
+	checkRepresentation(twosComplementRepresentation, bitsCount);
 	const isNegative = twosComplementRepresentation.gte(new BigNumber(2).pow(bitsCount - 1));
 	return fromOnesComplementRepresentation(
 		isNegative ? twosComplementRepresentation.minus(1) : twosComplementRepresentation,
