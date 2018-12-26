@@ -1,3 +1,7 @@
+// TODO: see why WebStorm cannot use declaration file of this module
+// noinspection ES6CheckImport
+import { keccak256 } from 'js-sha3';
+
 /**
  * @param {AbiMethod} abiMethod
  * @returns {string}
@@ -19,4 +23,12 @@ export function checkBytesCount(bytesCount) {
 	if (bytesCount <= 0) throw new Error('bytes count is not positive');
 	if (!Number.isSafeInteger(bytesCount)) throw new Error('bytes count is not a integer');
 	if (bytesCount > 32) throw new Error('bytes count is grater than 32');
+}
+
+/**
+ * @param {AbiMethod} abiMethod
+ * @returns {string}
+ */
+export function getMethodHash(abiMethod) {
+	return keccak256(getSignature(abiMethod)).substr(0, 8)
 }
