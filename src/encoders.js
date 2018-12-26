@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import $c from 'comprehension';
 import { toBigInteger } from './utils/converters';
 import { toTwosComplementRepresentation } from './utils/number-representations';
-import { checkIntegerSize } from './utils/solidity-utils';
+import { checkBytesCount, checkIntegerSize } from './utils/solidity-utils';
 
 /**
  * @param {boolean} value
@@ -77,10 +77,7 @@ export function encodeStaticBytes(bytesCount, input) {
 	}
 	input.encoding = input.encoding || defaultEncoding;
 	input.align = input.align || defaultAlign;
-	if (typeof bytesCount !== 'number') throw new Error('bytes count is not a number');
-	if (bytesCount <= 0) throw new Error('bytes count is not positive');
-	if (!Number.isSafeInteger(bytesCount)) throw new Error('bytes count is not a integer');
-	if (bytesCount > 32) throw new Error('bytes count is grater than 32');
+	checkBytesCount(bytesCount);
 	if (!Buffer.isBuffer(input.value)) {
 		if (input.encoding === 'hex' && input.value.substr(0, 2) === '0x') input.value = input.value.substr(2);
 		if (input.encoding === 'hex' && !/^([\da-fA-F]{2}){1,32}$/.test(input.value)) {

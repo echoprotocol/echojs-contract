@@ -13,3 +13,10 @@ export function checkIntegerSize(bitsCount) {
 	if (!Number.isSafeInteger(bitsCount)) throw new Error('bits count is not a integer');
 	if (bitsCount % 8 !== 0) throw new Error('bits count is not divisible to 8');
 }
+
+export function checkBytesCount(bytesCount) {
+	if (typeof bytesCount !== 'number') throw new Error('bytes count is not a number');
+	if (bytesCount <= 0) throw new Error('bytes count is not positive');
+	if (!Number.isSafeInteger(bytesCount)) throw new Error('bytes count is not a integer');
+	if (bytesCount > 32) throw new Error('bytes count is grater than 32');
+}
