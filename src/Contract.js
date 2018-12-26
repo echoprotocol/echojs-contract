@@ -1,8 +1,5 @@
-// TODO: see why WebStorm cannot use declaration file of this module
-// noinspection ES6CheckImport
-import { keccak256 } from 'js-sha3';
 import { cloneDeep } from 'lodash';
-import { getSignature } from './utils/solidity-utils';
+import { getMethodHash, getSignature } from './utils/solidity-utils';
 import encode from './encoders';
 
 /**
@@ -26,7 +23,7 @@ class Contract {
 			if (abiFunction.type !== 'function') continue;
 			if (!abiFunction.name) throw new Error('function has no name');
 			const signature = getSignature(abiFunction);
-			const hash = keccak256(signature).substr(0, 8);
+			const hash = getMethodHash(abiFunction);
 			const method = (...args) => {
 				if (args.length !== abiFunction.inputs.length) throw new Error('invalid arguments count');
 				const code = hash + encode(args.map((argument, index) => ({
@@ -40,7 +37,9 @@ class Contract {
 				console.warn(`[WARN]: There r several methods with name ${abiFunction.name}.`);
 				console.warn(`        To call them use its signatures or hashes.`);
 				delete newMethodsMap[abiFunction.name];
-			} else newMethodsMap[abiFunction.name] = method;
+			} else {
+				newMethodsMap[abiFunction.name] = method;
+			}
 			newMethodsMap[signature] = method;
 			newMethodsMap[`0x${hash}`] = method;
 		}
