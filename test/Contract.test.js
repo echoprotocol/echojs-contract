@@ -4,21 +4,44 @@ import { expect } from 'chai';
 import $c from 'comprehension';
 import Contract from '../src/Contract';
 
+/** @typedef {import("../src/_types").AbiMethod} AbiMethod */
+
+/** @typedef {Array<AbiMethod>} Abi */
+
+/** @type {AbiMethod} */
+const defaultAbiMethod = {
+	constant: true,
+	inputs: [],
+	name: 'test',
+	outputs: [],
+	payable: false,
+	stateMutability: 'pure',
+	type: 'function',
+};
+
 describe('Contract', () => {
 	describe('initializing', () => {
 		it('abi is not an array', () => {
-			// noinspection JSCheckFunctionSignatures
 			expect(() => new Contract('not_an_array')).to.throw(Error, 'abi is not an array');
 		});
-		it('function without a name', () => expect(() => new Contract([
-			{ type: 'function' },
-		])).to.throw(Error, 'function has no name'));
-		it(
-			'type not equals to "function"',
-			() => deepStrictEqual(new Contract([{ type: 'not_a_function' }]).methods, {}),
-		);
+		it('function without a name', () => {
+			/** @type {Abi} */
+			const abi = [{ ...defaultAbiMethod, name: undefined }];
+			expect(() => new Contract(abi)).to.throw(Error, 'abi method name is not a string');
+		});
+		it('type not equals to "function"', () => {
+			/** @type {Abi} */
+			const abi = [{ ...defaultAbiMethod, type: 'not_a_function' }];
+			deepStrictEqual(new Contract(abi).methods, {});
+		});
 		it('successful', () => {
-			const abi = [{ type: 'function', name: 'qwe', inputs: [{ type: 'uint32', name: 'number' }] }];
+			/** @type {Abi} */
+			const abi = [{
+				...defaultAbiMethod,
+				inputs: [{ type: 'uint32', name: 'number' }],
+				name: 'qwe',
+				type: 'function',
+			}];
 			const contract = new Contract(abi);
 			strictEqual(Object.keys(contract.methods).length, 3);
 			strictEqual(typeof contract.methods.qwe, 'function');
@@ -27,7 +50,13 @@ describe('Contract', () => {
 			deepStrictEqual(contract.abi, abi);
 		});
 		it('abi getter clones', () => {
-			const abi = [{ type: 'function', name: 'qwe', inputs: [{ type: 'uint32', name: 'number' }] }];
+			/** @type {Abi} */
+			const abi = [{
+				...defaultAbiMethod,
+				inputs: [{ type: 'uint32', name: 'number' }],
+				name: 'qwe',
+				type: 'function',
+			}];
 			const contract = new Contract(abi);
 			notStrictEqual(contract.abi, abi);
 			contract.abi.push({
@@ -42,6 +71,7 @@ describe('Contract', () => {
 			deepStrictEqual(abi, contract.abi);
 		});
 		it('two methods with same names', () => {
+			/** @type {Abi} */
 			const abi = [{
 				constant: false,
 				inputs: [{ type: 'uint32', name: 'num' }],
@@ -69,6 +99,7 @@ describe('Contract', () => {
 			strictEqual(contract.methods['qwe(string)'], contract.methods['0xbb70fa38']);
 		});
 		it('getCode() method', () => {
+			/** @type {Abi} */
 			const abi = [{
 				contract: false,
 				inputs: [
@@ -92,7 +123,7 @@ describe('Contract', () => {
 				[[[], [1]], [[2, 3], [4, 5, 6]], [[7, 8], [9]]],
 				' \\(ꙨပꙨ)// ',
 			);
-			deepStrictEqual(Object.keys(methodInstance), ['getCode']);
+			deepStrictEqual(Object.keys(methodInstance), ['getCode', 'call']);
 			strictEqual(methodInstance.getCode(), [
 				'9c89d58f',
 				'0000000000000000000102030405060708090a0b0c0d0e0f1011121314151617',
@@ -127,8 +158,8 @@ describe('Contract', () => {
 			].join(''));
 		});
 		it('invalid method arguments count', () => {
-			const contract = new Contract([{ type: 'function', name: 'qwe', inputs: [] }]);
-			expect(() => contract.methods.qwe(123)).to.throw(Error, 'invalid arguments count');
+			const contract = new Contract([defaultAbiMethod]);
+			expect(() => contract.methods.test(123)).to.throw(Error, 'invalid arguments count');
 		});
 	});
 });
