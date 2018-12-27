@@ -24,6 +24,25 @@ describe('Contract', () => {
 		it('abi is not an array', () => {
 			expect(() => new Contract('not_an_array')).to.throw(Error, 'abi is not an array');
 		});
+		it('abi method is not an object', () => {
+			expect(() => new Contract(['not_a_object'])).to.throw(Error, 'abi method is not an object');
+		});
+		it('abi method inputs is not an array', () => {
+			/** @type {Abi} */
+			const abi = [{
+				...defaultAbiMethod,
+				inputs: 'not_an_array',
+			}];
+			expect(() => new Contract(abi)).to.throw(Error, 'inputs of abi method is not an array');
+		});
+		it('abi method outputs is not an array', () => {
+			/** @type {Abi} */
+			const abi = [{
+				...defaultAbiMethod,
+				outputs: 'not_an_array',
+			}];
+			expect(() => new Contract(abi)).to.throw(Error, 'outputs of abi method is not an array');
+		});
 		it('function without a name', () => {
 			/** @type {Abi} */
 			const abi = [{ ...defaultAbiMethod, name: undefined }];

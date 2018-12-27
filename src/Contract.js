@@ -4,6 +4,7 @@ import { cloneDeep } from 'lodash';
 import encode from './encoders';
 import Method from './Method';
 import { getMethodHash, getSignature, checkAbiFormat } from './utils/solidity-utils';
+import { checkContractId } from './utils/validators';
 
 /** @typedef {import("../types/_Abi").AbiMethod} AbiMethod */
 
