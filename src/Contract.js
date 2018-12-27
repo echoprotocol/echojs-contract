@@ -1,33 +1,11 @@
 import { Echo } from 'echojs-lib';
 import { cloneDeep } from 'lodash';
-import { getMethodHash, getSignature, checkAbiFormat } from './utils/solidity-utils';
+
 import encode from './encoders';
-import BigNumber from 'bignumber.js';
-import decode from './decoders';
+import Method from './Method';
+import { getMethodHash, getSignature, checkAbiFormat } from './utils/solidity-utils';
 
 /** @typedef {import("../types/_Abi").AbiMethod} AbiMethod */
-
-const MAX_CONTRACT_ID = new BigNumber(2).pow(152).minus(1);
-
-function checkContractId(contractId) {
-	if (!/^1\.16\.[1-9]\d*$/.test(contractId)) throw new Error('invalid contractId format');
-	const id = new BigNumber(contractId.split('.')[2]);
-	if (id.gt(MAX_CONTRACT_ID)) throw new Error('contractId is greater than or equals to 2**152');
-}
-
-/**
- * @typedef {Object} CallOptions
- * @property {string} [contractId]
- * @property {string} [assetId]
- * @property {string} [accountId]
- * @property {Echo} [echo]
- */
-
-/**
- * @typedef {Object} Method
- * @property {()=>string} getCode
- * @property {(options:CallOptions)=>Promise<Array<*>|*|null>} call
- */
 
 class Contract {
 
@@ -48,10 +26,7 @@ class Contract {
 					value: argument,
 					type: abiFunction.inputs[index].type,
 				})));
-				return {
-					getCode: () => code,
-					call: (options) => this._call(options),
-				};
+				return new Method(this, abiFunction.outputs, code);
 			};
 			if (newMethodsMap[abiFunction.name]) {
 				// TODO: think about this case
@@ -106,34 +81,6 @@ class Contract {
 		this.abi = abi;
 		if (echo !== undefined) this.echo = echo;
 		if (contractId !== undefined) this.contractId = contractId;
-	}
-
-	/**
-	 * @private
-	 * @param {AbiMethod} abiMethod
-	 * @param {string} code
-	 * @param {CallOptions} [options]
-	 */
-	async _call(abiMethod, code, options = {}) {
-		let { contractId, assetId, accountId, echo } = options;
-		if (contractId === undefined) {
-			if (this.contractId === undefined) throw new Error('no contractId');
-			contractId = this.contractId;
-		} else checkContractId(contractId);
-		if (assetId === undefined) assetId = '1.3.0';
-		else if (!/^1\.3\.(0|[1-9]\d*)$/.test(assetId)) throw new Error('invalid assetId format');
-		if (accountId === undefined) accountId = '1.2.0';
-		else if (!/^1\.2\.(0|[1-9]\d*)$/.test(accountId)) throw new Error('invalid accountId format');
-		echo = echo || this.echo;
-		if (!echo) throw new Error('no echo instance');
-		// FIXME: remove @type when JSDoc of callContractNoChangingState will be fixed
-		/** @type {string} */
-		const rawResult = await echo.api.callContractNoChangingState(contractId, accountId, assetId, code);
-		if (rawResult === '') {
-			if (abiMethod.outputs.length === 0) return null;
-			throw new Error('call failed');
-		}
-		return decode(rawResult, abiMethod.outputs.map(({ type }) => type));
 	}
 
 }

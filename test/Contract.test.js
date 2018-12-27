@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import $c from 'comprehension';
 import Contract from '../src/Contract';
 
-/** @typedef {import("../src/_types").AbiMethod} AbiMethod */
+/** @typedef {import("../types/_Abi").AbiMethod} AbiMethod */
 
 /** @typedef {Array<AbiMethod>} Abi */
 
@@ -98,7 +98,7 @@ describe('Contract', () => {
 			notStrictEqual(contract.methods['0xbb70fa38'], contract.methods['0x5a2f5928']);
 			strictEqual(contract.methods['qwe(string)'], contract.methods['0xbb70fa38']);
 		});
-		it('getCode() method', () => {
+		it('get code method', () => {
 			/** @type {Abi} */
 			const abi = [{
 				contract: false,
@@ -123,8 +123,7 @@ describe('Contract', () => {
 				[[[], [1]], [[2, 3], [4, 5, 6]], [[7, 8], [9]]],
 				' \\(ꙨပꙨ)// ',
 			);
-			deepStrictEqual(Object.keys(methodInstance), ['getCode', 'call']);
-			strictEqual(methodInstance.getCode(), [
+			strictEqual(methodInstance.code, [
 				'9c89d58f',
 				'0000000000000000000102030405060708090a0b0c0d0e0f1011121314151617',
 				'0000000000000000dead00000000000000000000000000000000000000000000',
