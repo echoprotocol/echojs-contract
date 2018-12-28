@@ -7,7 +7,7 @@
 		"build": "babel src --out-dir dist --copy-files",
 		"posttest": "nyc report --reporter=text-summary --reporter=html",
 		"prepublishOnly": "npm run test && npm run build",
-		"test": "nyc npx mocha --require babel-core/register --require babel-polyfill"
+		"test": "nyc npx mocha --require babel-core/register --require babel-polyfill --exit"
 	},
 	"repository": {
 		"type": "git",
