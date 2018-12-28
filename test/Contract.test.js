@@ -1,8 +1,9 @@
 import 'mocha';
-import { deepStrictEqual, notStrictEqual, strictEqual } from 'assert';
+import { deepStrictEqual, notStrictEqual, strictEqual, ok } from 'assert';
 import { expect } from 'chai';
 import $c from 'comprehension';
 import Contract from '../src/Contract';
+import Method from '../src/Method';
 
 /** @typedef {import("../types/_Abi").AbiMethod} AbiMethod */
 
@@ -89,33 +90,41 @@ describe('Contract', () => {
 			});
 			deepStrictEqual(abi, contract.abi);
 		});
-		it('two methods with same names', () => {
+		it('several methods with same names', () => {
 			/** @type {Abi} */
 			const abi = [{
-				constant: false,
+				...defaultAbiMethod,
+				name: 'qwe',
 				inputs: [{ type: 'uint32', name: 'num' }],
-				name: 'qwe',
-				outputs: [{ type: 'bool', name: 'success' }],
-				payable: false,
-				stateMutability: 'nonpayable',
-				type: 'function',
 			}, {
-				constant: false,
-				inputs: [{ type: 'string', name: 'str' }],
+				...defaultAbiMethod,
 				name: 'qwe',
-				outputs: [{ type: 'bool', name: 'success' }],
-				payable: false,
-				stateMutability: 'nonpayable',
-				type: 'function',
+				inputs: [{ type: 'string', name: 'str' }],
+			}, {
+				...defaultAbiMethod,
+				name: 'qwe',
+				inputs: [{ type: 'bytes', name: 'buffer' }],
 			}];
 			const contract = new Contract(abi);
-			strictEqual(Object.keys(contract.methods).length, 4);
-			strictEqual(typeof contract.methods.qwe, 'undefined');
-			strictEqual(typeof contract.methods['0x5a2f5928'], 'function');
-			strictEqual(contract.methods['qwe(uint32)'], contract.methods['0x5a2f5928']);
-			strictEqual(typeof contract.methods['0xbb70fa38'], 'function');
-			notStrictEqual(contract.methods['0xbb70fa38'], contract.methods['0x5a2f5928']);
-			strictEqual(contract.methods['qwe(string)'], contract.methods['0xbb70fa38']);
+			strictEqual(Object.keys(contract.methods).length, 6);
+			strictEqual(contract.methods.qwe, undefined);
+
+			strictEqual(typeof contract.methods['qwe(uint32)'], 'function');
+			strictEqual(contract.methods['0x5a2f5928'], contract.methods['qwe(uint32)']);
+
+			strictEqual(typeof contract.methods['qwe(string)'], 'function');
+			strictEqual(contract.methods['0xbb70fa38'], contract.methods['qwe(string)']);
+			notStrictEqual(contract.methods['qwe(string)'], contract.methods['qwe(uint32)']);
+
+			strictEqual(typeof contract.methods['qwe(bytes)'], 'function');
+			strictEqual(contract.methods['0xc6e5f097'], contract.methods['qwe(bytes)']);
+			notStrictEqual(contract.methods['qwe(bytes)'], contract.methods['qwe(uint32)']);
+			notStrictEqual(contract.methods['qwe(bytes)'], contract.methods['string']);
+
+			const { namesDublications } = contract;
+			ok(namesDublications instanceof Set);
+			deepStrictEqual([...namesDublications.values()], ['qwe']);
+			notStrictEqual(namesDublications, contract.namesDublications);
 		});
 		it('get code method', () => {
 			/** @type {Abi} */

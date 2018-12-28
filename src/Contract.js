@@ -10,6 +10,9 @@ import { checkContractId } from './utils/validators';
 
 class Contract {
 
+	/** @returns {Set<string>} */
+	get namesDublications() { return new Set(this._namesDublications); }
+
 	/** @type {Array<AbiMethod>} */
 	get abi() { return cloneDeep(this._abi); }
 
@@ -17,28 +20,38 @@ class Contract {
 		checkAbiFormat(value);
 		/** @type {{[nameOrHashOrSignature:string]:()=>Method>}} */
 		const newMethodsMap = {};
+		/**
+		 * @private
+		 * @type {Set<string>}
+		 */
+		this._namesDublications = new Set();
 		for (const abiFunction of value) {
 			if (abiFunction.type !== 'function') continue;
 			const signature = getSignature(abiFunction);
 			const hash = getMethodHash(abiFunction);
 			const method = (...args) => {
 				if (args.length !== abiFunction.inputs.length) throw new Error('invalid arguments count');
-				const code = hash + encode(args.map((argument, index) => ({
+				const encodingInput = args.map((argument, index) => ({
 					value: argument,
 					type: abiFunction.inputs[index].type,
-				})));
+				}));
+				const code = hash + encode(encodingInput);
 				return new Method(this, abiFunction.outputs, code);
 			};
 			if (newMethodsMap[abiFunction.name]) {
-				// TODO: think about this case
-				console.warn(`[WARN]: There r several methods with name ${abiFunction.name}.`);
-				console.warn(`        To call them use its signatures or hashes.`);
+				this._namesDublications.add(abiFunction.name);
 				delete newMethodsMap[abiFunction.name];
-			} else {
+			} else if (!this._namesDublications.has(abiFunction.name)) {
 				newMethodsMap[abiFunction.name] = method;
 			}
 			newMethodsMap[signature] = method;
 			newMethodsMap[`0x${hash}`] = method;
+		}
+		if (this._namesDublications.size > 0) {
+			// TODO: think about this case
+			console.warn('[WARN] Found several functions with the same name');
+			console.warn('       To call them, use their signatures or hashes');
+			console.warn('       Get a list of duplicate names from a field "namesDublications"');
 		}
 		/**
 		 * @private
