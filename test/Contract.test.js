@@ -1,9 +1,7 @@
 import 'mocha';
 import { deepStrictEqual, notStrictEqual, strictEqual, ok } from 'assert';
 import { expect } from 'chai';
-import $c from 'comprehension';
 import Contract from '../src/Contract';
-import Method from '../src/Method';
 
 /** @typedef {import("../types/_Abi").AbiMethod} AbiMethod */
 
@@ -43,6 +41,10 @@ describe('Contract', () => {
 				outputs: 'not_an_array',
 			}];
 			expect(() => new Contract(abi)).to.throw(Error, 'outputs of abi method is not an array');
+		});
+		it('echo is not a instance of Echo', () => {
+			const func = () => new Contract([], { echo: 'not_a_Echo_instance' });
+			expect(func).to.throw(Error, 'value is not a instance of Echo');
 		});
 		it('function without a name', () => {
 			/** @type {Abi} */

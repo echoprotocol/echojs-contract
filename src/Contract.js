@@ -69,7 +69,7 @@ class Contract {
 	get echo() { return this._echo; }
 
 	set echo(value) {
-		if (!value instanceof Echo) throw new Error('value is not a instance of Echo');
+		if (!(value instanceof Echo)) throw new Error('value is not a instance of Echo');
 		/** @type Echo */
 		this._echo = value;
 	}
