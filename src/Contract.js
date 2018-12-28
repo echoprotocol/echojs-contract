@@ -62,12 +62,12 @@ class Contract {
 	}
 
 	/** @type {string|undefined} */
-	get contractId() { return this._contractId; }
+	get address() { return this._address; }
 
-	set contractId(value) {
+	set address(value) {
 		checkContractId(value);
 		/** @type {string|undefined} */
-		this._contractId = value;
+		this._address = value;
 	}
 
 	/** @returns {{[nameOrHashOrSignature:string]:()=>Method}} */
@@ -81,7 +81,7 @@ class Contract {
 	constructor(abi, { echo, contractId } = {}) {
 		this.abi = abi;
 		if (echo !== undefined) this.echo = echo;
-		if (contractId !== undefined) this.contractId = contractId;
+		if (contractId !== undefined) this.address = contractId;
 	}
 
 }

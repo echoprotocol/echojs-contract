@@ -41,8 +41,8 @@ export default class Method {
 	async call(options = {}) {
 		let { contractId, assetId, accountId, echo } = options;
 		if (contractId === undefined) {
-			if (this._contract.contractId === undefined) throw new Error('no contractId');
-			contractId = this._contract.contractId;
+			if (this._contract.address === undefined) throw new Error('no contractId');
+			contractId = this._contract.address;
 		} else checkContractId(contractId);
 		if (assetId === undefined) assetId = '1.3.0';
 		else if (!/^1\.3\.(0|[1-9]\d*)$/.test(assetId)) throw new Error('invalid assetId format');
