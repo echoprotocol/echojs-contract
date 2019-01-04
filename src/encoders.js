@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import $c from 'comprehension';
-import { toBigInteger } from './utils/converters';
+import { toBigInteger, toTwosPower } from './utils/converters';
 import { toTwosComplementRepresentation } from './utils/number-representations';
 import { checkBytesCount, checkIntegerSize } from './utils/solidity-utils';
 
@@ -22,7 +22,7 @@ export function encodeUnsignedInteger(bitsCount, value) {
 	checkIntegerSize(bitsCount);
 	value = toBigInteger(value);
 	if (value.isNegative()) throw new Error('value is negative');
-	if (value.gte(new BigNumber(2).pow(bitsCount))) {
+	if (value.gte(toTwosPower(bitsCount))) {
 		throw new Error(`uint${bitsCount} overflow`);
 	}
 	const preRes = value.toString(16);
@@ -37,7 +37,7 @@ export function encodeUnsignedInteger(bitsCount, value) {
 export function encodeInteger(bitsCount, value) {
 	checkIntegerSize(bitsCount);
 	value = toBigInteger(value);
-	if (value.abs().gte(new BigNumber(2).pow(bitsCount - 1))) throw new Error(`int${bitsCount} overflow`);
+	if (value.abs().gte(toTwosPower(bitsCount - 1))) throw new Error(`int${bitsCount} overflow`);
 	const twosComplementRepresentation = toTwosComplementRepresentation(value, bitsCount);
 	return encodeUnsignedInteger(bitsCount, twosComplementRepresentation);
 }

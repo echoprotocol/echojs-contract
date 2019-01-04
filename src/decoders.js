@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import $c from 'comprehension';
 import { checkBytesCount, checkIntegerSize } from './utils/solidity-utils';
 import { fromTwosComplementRepresentation } from './utils/number-representations';
+import { toTwosPower } from './utils/converters';
 
 /** @param {string} value */
 function checkValue(value) {
@@ -28,7 +29,7 @@ export function decodeUnsignedInteger(bitsCount, value) {
 	checkIntegerSize(bitsCount);
 	checkValue(value);
 	const result = new BigNumber(value, 16);
-	if (result.gte(new BigNumber(2).pow(bitsCount))) throw new Error(`uint${bitsCount} overflow`);
+	if (result.gte(toTwosPower(bitsCount))) throw new Error(`uint${bitsCount} overflow`);
 	return bitsCount > 48 ? result : result.toNumber();
 }
 
@@ -41,7 +42,7 @@ export function decodeSignedInteger(bitsCount, value) {
 	checkIntegerSize(bitsCount);
 	checkValue(value);
 	const twosComplementRepresentation = new BigNumber(value, 16);
-	if (twosComplementRepresentation.gte(new BigNumber(2).pow(bitsCount))) {
+	if (twosComplementRepresentation.gte(toTwosPower(bitsCount))) {
 		throw new Error(`int${bitsCount} overflow`);
 	}
 	const result = fromTwosComplementRepresentation(twosComplementRepresentation, bitsCount);

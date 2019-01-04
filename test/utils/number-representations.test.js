@@ -7,6 +7,7 @@ import {
 	toOnesComplementRepresentation,
 	toTwosComplementRepresentation,
 } from '../../src/utils/number-representations';
+import { toTwosPower } from '../../src/utils/converters';
 
 describe('number representations', () => {
 	describe('converters', () => {
@@ -19,7 +20,7 @@ describe('number representations', () => {
 				expect(() => toDirectRepresentation(123, bitsCount)).to.throw(Error, error || test);
 			});
 			it('overflow', () => {
-				const value = new BigNumber(2).pow(8).plus(123);
+				const value = toTwosPower(8).plus(123);
 				expect(() => toDirectRepresentation(value, 8)).to.throw(Error, 'int8 overflow');
 			});
 			it('positive', () => ok(toDirectRepresentation(9, 8).eq(new BigNumber('00001001', 2))));
