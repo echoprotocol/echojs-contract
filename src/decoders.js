@@ -3,6 +3,7 @@ import $c from 'comprehension';
 import { checkBytesCount, checkIntegerSize } from './utils/solidity-utils';
 import { fromTwosComplementRepresentation } from './utils/number-representations';
 
+/** @param {string} value */
 function checkValue(value) {
 	if (typeof value !== 'string') throw new Error('decoding value is not a string');
 	if (!/^[\da-fA-F]{64}$/.test(value)) throw new Error('decoding value is not a 32-byte in hex');
@@ -74,6 +75,13 @@ export function decodeStaticBytes(bytesCount, value) {
 	return Buffer.from(value.substr(0, bytesCount * 2), 'hex');
 }
 
+/**
+ * @param {Array<string>} code
+ * @param {number} from
+ * @param {number} length
+ * @param {import('../types/_Abi').SolType} type
+ * @returns {{shift:number,res:Array<string>}}
+ */
 function decodeArray(code, from, length, type) {
 	let shift = 0;
 	const res = $c(length, () => {
@@ -84,12 +92,20 @@ function decodeArray(code, from, length, type) {
 	return { shift, res };
 }
 
+/**
+ * @param {number} rawOffset
+ * @returns {number}
+ */
 function getOffset(rawOffset) {
 	const result = Number.parseInt(rawOffset, 16);
 	if (result % 32 !== 0) throw new Error('invalid offset');
 	return result / 32;
 }
 
+/**
+ * @param {Array<string>} code
+ * @param {number} offset
+ */
 function decodeDynamicBytes(code, offset) {
 	const length = Number.parseInt(code[offset], 16);
 	const hexCharsCount = length * 2;
