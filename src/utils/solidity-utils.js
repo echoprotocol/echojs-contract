@@ -30,5 +30,5 @@ export function checkBytesCount(bytesCount) {
  * @returns {string}
  */
 export function getMethodHash(abiMethod) {
-	return keccak256(getSignature(abiMethod)).substr(0, 8)
+	return keccak256(getSignature(abiMethod)).substr(0, 8);
 }

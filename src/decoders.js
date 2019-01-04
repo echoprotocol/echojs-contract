@@ -139,7 +139,7 @@ export function decodeArgument(code, index, type) {
 	}
 	const intMatch = type.match(/^int(\d+)$/);
 	if (intMatch) {
-		const bitsCount = Number.parseInt(intMatch[1]);
+		const bitsCount = Number.parseInt(intMatch[1], 10);
 		return { shift: 1, res: decodeSignedInteger(bitsCount, code[index]) };
 	}
 	const staticBytesMatch = type.match(/^bytes(\d+)$/);

@@ -34,8 +34,10 @@ class Contract {
 			};
 			if (newMethodsMap[abiFunction.name]) {
 				// TODO: think about this case
+				// eslint-disable-next-line no-console
 				console.warn(`[WARN]: There r several methods with name ${abiFunction.name}.`);
-				console.warn(`        To call them use its signatures or hashes.`);
+				// eslint-disable-next-line no-console
+				console.warn('        To call them use its signatures or hashes.');
 				delete newMethodsMap[abiFunction.name];
 			} else {
 				newMethodsMap[abiFunction.name] = method;

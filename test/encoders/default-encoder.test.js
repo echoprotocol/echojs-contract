@@ -23,11 +23,13 @@ describe('encode', () => {
 				{ test: 'zero', bitsCount: 0, message: 'bits count is not positive' },
 				{ test: 'greater than 256', bitsCount: 257, message: 'bits count is greater than 256' },
 				{ test: 'not divisible to 8', bitsCount: 7, message: 'bits count is not divisible to 8' },
-			]) it(test, () => {
-				for (const type of [`uint${bitsCount}`, `int${bitsCount}`]) {
-					expect(() => encode({ value: 123, type })).to.throw(Error, message);
-				}
-			});
+			]) {
+				it(test, () => {
+					for (const type of [`uint${bitsCount}`, `int${bitsCount}`]) {
+						expect(() => encode({ value: 123, type })).to.throw(Error, message);
+					}
+				});
+			}
 		});
 		describe('invalid value', () => {
 			for (const { test, value, message } of [{
@@ -50,11 +52,13 @@ describe('encode', () => {
 				test: 'decimal BigNumber',
 				value: new BigNumber(1.23),
 				message: 'value is not a integer',
-			}]) it(test, () => {
-				for (const type of ['uint256', 'int256']) {
-					expect(() => encode({ value, type })).to.throw(Error, message);
-				}
-			});
+			}]) {
+				it(test, () => {
+					for (const type of ['uint256', 'int256']) {
+						expect(() => encode({ value, type })).to.throw(Error, message);
+					}
+				});
+			}
 		});
 		describe('unsigned', () => {
 			it('negative value', () => expect(() => encode({
@@ -167,10 +171,12 @@ describe('encode', () => {
 			for (const { test, bytesCount, error } of [
 				{ test: 'zero', bytesCount: 0, error: 'bytes count is not positive' },
 				{ test: 'gt 32', bytesCount: 33, error: 'bytes count is grater than 32' },
-			]) it(test, () => expect(() => encode({
-				type: `bytes${bytesCount}`,
-				value: Buffer.from([]),
-			})).to.throws(Error, error));
+			]) {
+				it(test, () => expect(() => encode({
+					type: `bytes${bytesCount}`,
+					value: Buffer.from([]),
+				})).to.throws(Error, error));
+			}
 		});
 
 		for (const { test, input } of [
@@ -181,10 +187,12 @@ describe('encode', () => {
 			{ test: 'ascii', input: { value: '\x01#E\0', encoding: 'ascii' } },
 			{ test: 'utf8', input: { value: '\x01#E\0', encoding: 'utf8' } },
 			{ test: 'utf16le', input: { value: '⌁E', encoding: 'utf16le' } },
-		]) it(test, () => strictEqual(
-			encode({ type: 'bytes4', value: input }),
-			'0000000000000000000000000000000000000000000000000000000001234500',
-		));
+		]) {
+			it(test, () => strictEqual(
+				encode({ type: 'bytes4', value: input }),
+				'0000000000000000000000000000000000000000000000000000000001234500',
+			));
+		}
 	});
 
 	describe('arrays', () => {

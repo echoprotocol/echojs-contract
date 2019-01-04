@@ -217,7 +217,7 @@ export default function encode(input) {
 					...result.slice(i + 1),
 				];
 				result = result.map((element) =>
-					(typeof element === 'number') && element > i ? element + shiftLength : element);
+					typeof element === 'number' && element > i ? element + shiftLength : element);
 				i -= 1;
 				continue;
 			}
