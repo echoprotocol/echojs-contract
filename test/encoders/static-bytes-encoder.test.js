@@ -1,12 +1,12 @@
 import { strictEqual } from 'assert';
 import { expect } from 'chai';
 import { encodeStaticBytes } from '../../src/encoders';
+import bytesCountTest from '../_bytesCount.test';
 
 describe('encodeStaticBytes', () => {
-	for (const { test, bytesCount } of [
-		{ test: 'bytes count is not a number', bytesCount: 'not_a_number' },
-		{ test: 'bytes count is not a integer', bytesCount: 1.23 },
-	]) it(test, () => expect(() => encodeStaticBytes(bytesCount, 'qwe')).to.throw(Error, test));
+	for (const { test, bytesCount } of bytesCountTest) {
+		it(test, () => expect(() => encodeStaticBytes(bytesCount, 'qwe')).to.throw(Error, test));
+	}
 	it('align left', () => strictEqual(
 		encodeStaticBytes(2, { value: 'af', align: 'left' }),
 		'000000000000000000000000000000000000000000000000000000000000af00',

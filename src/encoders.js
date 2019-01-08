@@ -1,7 +1,8 @@
 import BigNumber from 'bignumber.js';
 import $c from 'comprehension';
-import { toBigInteger } from './utils/converters';
+import { toBigInteger, toTwosPower } from './utils/converters';
 import { toTwosComplementRepresentation } from './utils/number-representations';
+import { checkBytesCount, checkIntegerSize } from './utils/solidity-utils';
 
 /**
  * @param {boolean} value
@@ -10,14 +11,6 @@ import { toTwosComplementRepresentation } from './utils/number-representations';
 export function encodeBool(value) {
 	if (typeof value !== 'boolean') throw new Error('value is not a boolean');
 	return $c(63, () => '0').join('') + (value ? '1' : '0');
-}
-
-function checkIntegerSize(bitsCount) {
-	if (typeof bitsCount !== 'number') throw new Error('bits count is not a number');
-	if (bitsCount <= 0) throw new Error('bits count is not positive');
-	if (bitsCount > 256) throw new Error('bits count is greater than 256');
-	if (!Number.isSafeInteger(bitsCount)) throw new Error('bits count is not a integer');
-	if (bitsCount % 8 !== 0) throw new Error('bits count is not divisible to 8');
 }
 
 /**
@@ -29,7 +22,7 @@ export function encodeUnsignedInteger(bitsCount, value) {
 	checkIntegerSize(bitsCount);
 	value = toBigInteger(value);
 	if (value.isNegative()) throw new Error('value is negative');
-	if (value.gte(new BigNumber(2).pow(bitsCount))) {
+	if (value.gte(toTwosPower(bitsCount))) {
 		throw new Error(`uint${bitsCount} overflow`);
 	}
 	const preRes = value.toString(16);
@@ -44,7 +37,7 @@ export function encodeUnsignedInteger(bitsCount, value) {
 export function encodeInteger(bitsCount, value) {
 	checkIntegerSize(bitsCount);
 	value = toBigInteger(value);
-	if (value.abs().gte(new BigNumber(2).pow(bitsCount - 1))) throw new Error(`int${bitsCount} overflow`);
+	if (value.abs().gte(toTwosPower(bitsCount - 1))) throw new Error(`int${bitsCount} overflow`);
 	const twosComplementRepresentation = toTwosComplementRepresentation(value, bitsCount);
 	return encodeUnsignedInteger(bitsCount, twosComplementRepresentation);
 }
@@ -84,10 +77,7 @@ export function encodeStaticBytes(bytesCount, input) {
 	}
 	input.encoding = input.encoding || defaultEncoding;
 	input.align = input.align || defaultAlign;
-	if (typeof bytesCount !== 'number') throw new Error('bytes count is not a number');
-	if (bytesCount <= 0) throw new Error('bytes count is not positive');
-	if (!Number.isSafeInteger(bytesCount)) throw new Error('bytes count is not a integer');
-	if (bytesCount > 32) throw new Error('bytes count is grater than 32');
+	checkBytesCount(bytesCount);
 	if (!Buffer.isBuffer(input.value)) {
 		if (input.encoding === 'hex' && input.value.substr(0, 2) === '0x') input.value = input.value.substr(2);
 		if (input.encoding === 'hex' && !/^([\da-fA-F]{2}){1,32}$/.test(input.value)) {
@@ -227,7 +217,7 @@ export default function encode(input) {
 					...result.slice(i + 1),
 				];
 				result = result.map((element) =>
-					(typeof element === 'number') && element > i ? element + shiftLength : element);
+					typeof element === 'number' && element > i ? element + shiftLength : element);
 				i -= 1;
 				continue;
 			}
