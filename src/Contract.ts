@@ -70,8 +70,8 @@ export default class Contract {
 	public static deploy(
 		bytecode: Buffer,
 		abi: Array<AbiFunction>,
-		privateKey: PrivateKey,
-		args: Array<any>,
+		privateKey?: PrivateKey | undefined,
+		args?: Array<any>,
 	): Promise<Contract> {
 		return deploy(bytecode, abi, privateKey, args);
 	}
