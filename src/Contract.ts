@@ -9,7 +9,7 @@ const MAX_CONTRACT_ID = new BN(2).pow(19).minus(1);
 let defaultAccountId: string | null = null;
 let defaultPrivateKey: PrivateKey | null = null;
 
-export default class Contract {
+class Contract {
 	[method: string]: ((...args: Array<any>) => Promise<any>) | any;
 
 	public readonly contractId: string;
@@ -56,9 +56,7 @@ export default class Contract {
 		}
 	}
 
-	getAccountId() {
-		return this.accountId;
-	}
+	getAccountId() { return this.accountId; }
 
 	async setAccount(privateKey: PrivateKey) {
 		const publicKey = privateKey.toPublicKey();
@@ -78,17 +76,14 @@ export default class Contract {
 
 }
 
-export async function setDefaultAccount(privateKey: PrivateKey) {
+async function setDefaultAccount(privateKey: PrivateKey) {
 	const publicKey = privateKey.toPublicKey();
 	defaultAccountId = await ChainStore.FetchChain('getAccountRefsOfKey', publicKey.toString())
 		.then((res) => res.toJS()[0] as string);
 	defaultPrivateKey = privateKey;
 }
 
-export function getDefaultAccountId() {
-	return defaultAccountId;
-}
-
-export function getDefaultPrivateKey(): PrivateKey | null {
-	return defaultPrivateKey;
-}
+export default Contract;
+export { setDefaultAccount, PrivateKey };
+export function getDefaultAccountId() { return defaultAccountId; }
+export function getDefaultPrivateKey(): PrivateKey | null { return defaultPrivateKey; }
