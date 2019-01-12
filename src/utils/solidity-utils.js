@@ -1,6 +1,6 @@
-// TODO: see why WebStorm cannot use declaration file of this module
-// noinspection ES6CheckImport
 import { keccak256 } from 'js-sha3';
+
+/** @typedef {import("../../types/_Abi").AbiMethod} AbiMethod */
 
 /**
  * @param {AbiMethod} abiMethod
@@ -31,4 +31,16 @@ export function checkBytesCount(bytesCount) {
  */
 export function getMethodHash(abiMethod) {
 	return keccak256(getSignature(abiMethod)).substr(0, 8);
+}
+
+/** @param {Array<AbiMethod>} abi */
+export function checkAbiFormat(abi) {
+	if (!Array.isArray(abi)) throw new Error('abi is not an array');
+	for (const abiMethod of abi) {
+		// typeof is uncovered. see https://github.com/gotwarlost/istanbul/issues/582
+		if (typeof abiMethod !== 'object' || abiMethod === null) throw new Error('abi method is not an object');
+		if (typeof abiMethod.name !== 'string') throw new Error('abi method name is not a string');
+		if (!Array.isArray(abiMethod.inputs)) throw new Error('inputs of abi method is not an array');
+		if (!Array.isArray(abiMethod.outputs)) throw new Error('outputs of abi method is not an array');
+	}
 }

@@ -1,3 +1,4 @@
+import 'mocha';
 import { ok } from 'assert';
 import BigNumber from 'bignumber.js';
 import { expect } from 'chai';
