@@ -40,6 +40,11 @@ class Contract {
 			};
 			if (newMethodsMap[abiFunction.name]) {
 				this._namesDublications.add(abiFunction.name);
+				// TODO: think about this case
+				// eslint-disable-next-line no-console
+				console.warn(`[WARN]: There r several methods with name ${abiFunction.name}.`);
+				// eslint-disable-next-line no-console
+				console.warn('        To call them use its signatures or hashes.');
 				delete newMethodsMap[abiFunction.name];
 			} else if (!this._namesDublications.has(abiFunction.name)) {
 				newMethodsMap[abiFunction.name] = method;

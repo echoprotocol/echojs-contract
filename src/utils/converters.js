@@ -16,3 +16,9 @@ export function toBigInteger(value) {
 	if (!value.isInteger()) throw new Error('value is not a integer');
 	return value;
 }
+
+/**
+ * @param {number} power
+ * @returns {BigNumber}
+ */
+export function toTwosPower(power) { return new BigNumber(2).pow(power); }

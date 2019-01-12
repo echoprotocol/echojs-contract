@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import { expect } from 'chai';
 import $c from 'comprehension';
 import encode from '../../src/encoders';
+import { toTwosPower } from '../../src/utils/converters';
 
 describe('encode', () => {
 
@@ -22,11 +23,13 @@ describe('encode', () => {
 				{ test: 'zero', bitsCount: 0, message: 'bits count is not positive' },
 				{ test: 'greater than 256', bitsCount: 257, message: 'bits count is greater than 256' },
 				{ test: 'not divisible to 8', bitsCount: 7, message: 'bits count is not divisible to 8' },
-			]) it(test, () => {
-				for (const type of [`uint${bitsCount}`, `int${bitsCount}`]) {
-					expect(() => encode({ value: 123, type })).to.throw(Error, message);
-				}
-			});
+			]) {
+				it(test, () => {
+					for (const type of [`uint${bitsCount}`, `int${bitsCount}`]) {
+						expect(() => encode({ value: 123, type })).to.throw(Error, message);
+					}
+				});
+			}
 		});
 		describe('invalid value', () => {
 			for (const { test, value, message } of [{
@@ -49,11 +52,13 @@ describe('encode', () => {
 				test: 'decimal BigNumber',
 				value: new BigNumber(1.23),
 				message: 'value is not a integer',
-			}]) it(test, () => {
-				for (const type of ['uint256', 'int256']) {
-					expect(() => encode({ value, type })).to.throw(Error, message);
-				}
-			});
+			}]) {
+				it(test, () => {
+					for (const type of ['uint256', 'int256']) {
+						expect(() => encode({ value, type })).to.throw(Error, message);
+					}
+				});
+			}
 		});
 		describe('unsigned', () => {
 			it('negative value', () => expect(() => encode({
@@ -62,7 +67,7 @@ describe('encode', () => {
 			})).to.throw(Error, 'value is negative'));
 			it('uint64 overflow', () => expect(() => encode({
 				type: 'uint64',
-				value: new BigNumber(2).pow(64).plus(123),
+				value: toTwosPower(64).plus(123),
 			})).to.throw(Error, 'uint64 overflow'));
 			it('successful', () => strictEqual(encode({
 				type: 'uint256',
@@ -73,7 +78,7 @@ describe('encode', () => {
 				'000000000000000000000000000000000000000000000000000462d53d1f8cbf',
 			));
 			it('different bounds of overflow with signed integer', () => strictEqual(
-				encode({ type: 'uint64', value: new BigNumber(2).pow(63).plus(123) }),
+				encode({ type: 'uint64', value: toTwosPower(63).plus(123) }),
 				'000000000000000000000000000000000000000000000000800000000000007b',
 			));
 			it('as dec string', () => strictEqual(
@@ -88,8 +93,8 @@ describe('encode', () => {
 		describe('signed', () => {
 			it('int64 overflow', () => {
 				for (const value of [
-					new BigNumber(2).pow(63).plus(123),
-					new BigNumber(2).pow(63).times(-1).minus(123),
+					toTwosPower(63).plus(123),
+					toTwosPower(63).times(-1).minus(123),
 				]) expect(() => encode({ type: 'int64', value })).to.throw(Error, 'int64 overflow');
 			});
 			it('positive', () => strictEqual(encode({
@@ -122,11 +127,11 @@ describe('encode', () => {
 		});
 		it('objectId gt 2**152', () => expect(() => encode({
 			type: 'address',
-			value: `1.16.${new BigNumber(2).pow(152).plus(123).toString(10)}`,
+			value: `1.16.${toTwosPower(152).plus(123).toString(10)}`,
 		})).to.throw(Error, 'objectId is greater or equals to 2**152'));
 		it('objectId eqt 2**152', () => expect(() => encode({
 			type: 'address',
-			value: `1.16.${new BigNumber(2).pow(152).toString(10)}`,
+			value: `1.16.${toTwosPower(152).toString(10)}`,
 		})).to.throw(Error, 'objectId is greater or equals to 2**152'));
 		describe('successful', () => {
 			it('account', () => strictEqual(
@@ -166,10 +171,12 @@ describe('encode', () => {
 			for (const { test, bytesCount, error } of [
 				{ test: 'zero', bytesCount: 0, error: 'bytes count is not positive' },
 				{ test: 'gt 32', bytesCount: 33, error: 'bytes count is grater than 32' },
-			]) it(test, () => expect(() => encode({
-				type: `bytes${bytesCount}`,
-				value: Buffer.from([]),
-			})).to.throws(Error, error));
+			]) {
+				it(test, () => expect(() => encode({
+					type: `bytes${bytesCount}`,
+					value: Buffer.from([]),
+				})).to.throws(Error, error));
+			}
 		});
 
 		for (const { test, input } of [
@@ -180,10 +187,12 @@ describe('encode', () => {
 			{ test: 'ascii', input: { value: '\x01#E\0', encoding: 'ascii' } },
 			{ test: 'utf8', input: { value: '\x01#E\0', encoding: 'utf8' } },
 			{ test: 'utf16le', input: { value: '⌁E', encoding: 'utf16le' } },
-		]) it(test, () => strictEqual(
-			encode({ type: 'bytes4', value: input }),
-			'0000000000000000000000000000000000000000000000000000000001234500',
-		));
+		]) {
+			it(test, () => strictEqual(
+				encode({ type: 'bytes4', value: input }),
+				'0000000000000000000000000000000000000000000000000000000001234500',
+			));
+		}
 	});
 
 	describe('arrays', () => {

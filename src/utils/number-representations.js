@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { toBigInteger } from './converters';
+import { toBigInteger, toTwosPower } from './converters';
 
 /** @param {number} bitsCount */
 function checkBitsCount(bitsCount) {
@@ -16,8 +16,8 @@ export function toDirectRepresentation(number, bitsCount) {
 	checkBitsCount(bitsCount);
 	number = toBigInteger(number);
 	const abs = number.abs();
-	if (abs.gte(new BigNumber(2).pow(bitsCount - 1))) throw new Error(`int${bitsCount} overflow`);
-	return number.isNegative() ? abs.plus(new BigNumber(2).pow(bitsCount - 1)) : abs;
+	if (abs.gte(toTwosPower(bitsCount - 1))) throw new Error(`int${bitsCount} overflow`);
+	return number.isNegative() ? abs.plus(toTwosPower(bitsCount - 1)) : abs;
 }
 
 /**
@@ -28,7 +28,7 @@ function checkRepresentation(representation, bitsCount) {
 	checkBitsCount(bitsCount);
 	if (!BigNumber.isBigNumber(representation)) throw new Error('representation is not a BigNumber');
 	if (representation.isNegative()) throw new Error('representation is negative');
-	if (representation.gte(new BigNumber(2).pow(bitsCount))) {
+	if (representation.gte(toTwosPower(bitsCount))) {
 		throw new Error(`${bitsCount}-bit representation overflow`);
 	}
 }
@@ -40,7 +40,7 @@ function checkRepresentation(representation, bitsCount) {
  */
 export function fromDirectRepresentation(directRepresentation, bitsCount) {
 	checkRepresentation(directRepresentation, bitsCount);
-	const postMaxValue = new BigNumber(2).pow(bitsCount - 1);
+	const postMaxValue = toTwosPower(bitsCount - 1);
 	const isNegative = directRepresentation.gte(postMaxValue);
 	const abs = isNegative ? directRepresentation.minus(postMaxValue) : directRepresentation;
 	return isNegative ? abs.times(-1) : abs;
@@ -55,9 +55,9 @@ export function toOnesComplementRepresentation(number, bitsCount) {
 	number = toBigInteger(number);
 	const directRepresentation = toDirectRepresentation(number, bitsCount);
 	if (!number.isNegative()) return directRepresentation;
-	return new BigNumber(2).pow(bitsCount - 1)
+	return toTwosPower(bitsCount - 1)
 		.minus(1)
-		.plus(new BigNumber(2).pow(bitsCount))
+		.plus(toTwosPower(bitsCount))
 		.minus(directRepresentation);
 }
 
@@ -68,13 +68,13 @@ export function toOnesComplementRepresentation(number, bitsCount) {
  */
 export function fromOnesComplementRepresentation(onesComplementRepresentation, bitsCount) {
 	checkRepresentation(onesComplementRepresentation, bitsCount);
-	const isNegative = onesComplementRepresentation.gte(new BigNumber(2).pow(bitsCount - 1));
+	const isNegative = onesComplementRepresentation.gte(toTwosPower(bitsCount - 1));
 	return isNegative ?
 		fromDirectRepresentation(
 			new BigNumber(2)
 				.pow(bitsCount - 1)
 				.minus(1)
-				.plus(new BigNumber(2).pow(bitsCount))
+				.plus(toTwosPower(bitsCount))
 				.minus(onesComplementRepresentation),
 			bitsCount,
 		) :
@@ -100,7 +100,7 @@ export function toTwosComplementRepresentation(number, bitsCount) {
  */
 export function fromTwosComplementRepresentation(twosComplementRepresentation, bitsCount) {
 	checkRepresentation(twosComplementRepresentation, bitsCount);
-	const isNegative = twosComplementRepresentation.gte(new BigNumber(2).pow(bitsCount - 1));
+	const isNegative = twosComplementRepresentation.gte(toTwosPower(bitsCount - 1));
 	return fromOnesComplementRepresentation(
 		isNegative ? twosComplementRepresentation.minus(1) : twosComplementRepresentation,
 		bitsCount,

@@ -5,7 +5,7 @@ import decode from '../../src/decoders';
 describe('decoders', () => {
 	it('unknown type', () => {
 		const func = () => decode('0123456789abcdeffedbca98765432100123456789abcdeffedbca9876543210', ['unknown_type']);
-		expect(func).to.throw(Error, 'unknown type unknown_type')
+		expect(func).to.throw(Error, 'unknown type unknown_type');
 	});
 	it('invalid code length', () => {
 		const func = () => decode('0123', ['qwe']);
