@@ -9,9 +9,9 @@ import checkContractIdTests from './_checkContractId.test';
 describe('Method', () => {
 	describe('call', () => {
 
-		before(() => echo.connect('wss://echo-dev.io/ws'));
+		before(() => echo.connect('ws://195.201.164.54:6311'));
 
-		const contractId = '1.16.7829';
+		const contractId = '1.16.106';
 		const abi = [{
 			constant: true,
 			inputs: [{ name: '_addr', type: 'address' }],
