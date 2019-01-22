@@ -40,11 +40,6 @@ class Contract {
 			};
 			if (newMethodsMap[abiFunction.name]) {
 				this._namesDublications.add(abiFunction.name);
-				// TODO: think about this case
-				// eslint-disable-next-line no-console
-				console.warn(`[WARN]: There r several methods with name ${abiFunction.name}.`);
-				// eslint-disable-next-line no-console
-				console.warn('        To call them use its signatures or hashes.');
 				delete newMethodsMap[abiFunction.name];
 			} else if (!this._namesDublications.has(abiFunction.name)) {
 				newMethodsMap[abiFunction.name] = method;
@@ -54,8 +49,11 @@ class Contract {
 		}
 		if (this._namesDublications.size > 0) {
 			// TODO: think about this case
+			// eslint-disable-next-line no-console
 			console.warn('[WARN] Found several functions with the same name');
+			// eslint-disable-next-line no-console
 			console.warn('       To call them, use their signatures or hashes');
+			// eslint-disable-next-line no-console
 			console.warn('       Get a list of duplicate names from a field "namesDublications"');
 		}
 		/**
