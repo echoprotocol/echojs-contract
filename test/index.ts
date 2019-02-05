@@ -7,7 +7,7 @@ if (!process.env.NO_TEST_CHAIN) {
 	describe("connect", () => {
 		it("successful", async function () {
 			this.timeout(5e3);
-			await connect("wss://echo-dev.io/ws");
+			await connect("ws://195.201.164.54:6311");
 		});
 	});
 }

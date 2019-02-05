@@ -1,5 +1,4 @@
-import { PrivateKey, ContractFrame } from "echojs-lib";
-import { Apis } from "echojs-ws";
+import { PrivateKey, ContractFrame, Apis } from "echojs-lib";
 import Contract, { getDefaultPrivateKey } from "../Contract";
 import { parseInput } from "../simple-utils/parseInput";
 import getAccountId from "./getAccountId";
@@ -28,7 +27,7 @@ export default async function deploy(
 	}, privateKey!);
 	const deployResultId: string = deployCallRes[0].trx.operation_results[0][1];
 	const deployResult = await Apis.instance().dbApi().exec('get_contract_result', [deployResultId]);
-	const contractId = `1.16.${Number.parseInt((deployResult.exec_res.new_address as string).substr(8), 16)}`;
+	const contractId = `1.16.${Number.parseInt((deployResult[1].exec_res.new_address as string).substr(8), 16)}`;
 	const contract = new Contract(contractId, abi);
 	await contract.setAccount(privateKey!);
 	return contract;

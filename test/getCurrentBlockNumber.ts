@@ -1,7 +1,6 @@
 import "mocha";
 import { ok, strictEqual } from "assert";
 import { getCurrentBlockNumber } from "../src";
-import { ChainStore } from "echojs-lib";
 
 function checkBlockNumber(blockNumber: number) {
 	strictEqual(typeof blockNumber, 'number');
@@ -12,7 +11,6 @@ function checkBlockNumber(blockNumber: number) {
 describe('getCurrentBlockNumber', () => {
 	let blockNumber: number;
 	it('successful', async () => {
-		await ChainStore.init();
 		blockNumber = await getCurrentBlockNumber();
 		checkBlockNumber(blockNumber);
 	});
@@ -22,6 +20,7 @@ describe('getCurrentBlockNumber', () => {
 		const newBlockNumber = await getCurrentBlockNumber();
 		checkBlockNumber(newBlockNumber);
 		ok(newBlockNumber > blockNumber);
-		ok(newBlockNumber - blockNumber < 3);
+		ok(newBlockNumber - blockNumber > 0);
+		ok(newBlockNumber - blockNumber < 5);
 	});
 });

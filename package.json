@@ -17,7 +17,6 @@
 		"bignumber.js": "^7.2.1",
 		"comprehension": "^1.0.3",
 		"echojs-lib": "^0.1.9",
-		"echojs-ws": "^0.1.11",
 		"js-sha3": "^0.8.0"
 	},
 	"devDependencies": {

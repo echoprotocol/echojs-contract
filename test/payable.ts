@@ -22,7 +22,7 @@ describe('payable', () => {
 	const value: number = 1e-2;
 	it('send', async function () {
 		this.timeout(12e3);
-		ok(await contract.send({ value }).then((res) =>  res.times(1e-5).eq(value)));
+		ok(await contract.send({ value }).then((res) =>  res.times(1e-4).eq(value)));
 	});
-	it('check', async () => ok(await contract.value().then((res) => res.times(1e-5).eq(value))));
+	it('check', async () => ok(await contract.value().then((res) => res.times(1e-4).eq(value))));
 });
