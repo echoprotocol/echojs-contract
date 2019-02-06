@@ -11,6 +11,8 @@ import AbiFunction, { Arg } from './types/abiFunction';
 
 export default Contract;
 
+export { PrivateKey, ChainStore, ChainValidation, Apis } from 'echojs-lib';
+
 export {
 	connect,
 	Contract,
