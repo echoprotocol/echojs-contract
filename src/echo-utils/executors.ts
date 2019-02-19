@@ -33,8 +33,6 @@ export async function call(
 	transaction.add_type_operation('call_contract', {
 		registrar: accountId,
 		value: { amount: new BigNumber(value).times(1e4).toString(), asset_id: '1.3.0' },
-		gasPrice: 0,
-		gas: 10e6,
 		code: functionCode + pureArgs,
 		callee: contractId,
 	});

@@ -22,7 +22,6 @@ export default async function deploy(
 		.join('');
 	const deployCallRes = await contractFrame.deployContract({
 		accountId,
-		gas: 10e6,
 		bytecode: bytecode.toString('hex') + pureArguments,
 	}, privateKey!);
 	const deployResultId: string = deployCallRes[0].trx.operation_results[0][1];
