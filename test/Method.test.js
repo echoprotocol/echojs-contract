@@ -1,5 +1,5 @@
 import 'mocha';
-import { strictEqual, ok, fail } from 'assert';
+import { strictEqual, ok, fail, deepStrictEqual } from 'assert';
 import $c from 'comprehension';
 import echo, { PrivateKey, BigNumber } from 'echojs-lib';
 
@@ -16,7 +16,7 @@ describe('Method', () => {
 	let contract = null;
 
 	before(async function () {
-		this.timeout(7e3);
+		this.timeout(9e3);
 		await echo.connect(config.rpcAddress);
 		const { abi, code } = await getContract();
 		contract = await Contract.deploy(code, echo, PrivateKey.fromWif(config.wif), { abi });
@@ -107,5 +107,23 @@ describe('Method', () => {
 				'0000000000000000000000000000000000000000000000000000000000000009',
 			].join(''));
 		});
+	});
+
+	describe('broadcast', () => {
+		it('successful', async () => {
+			const res = await contract.methods.setVariable(123)
+				.broadcast({ privateKey: PrivateKey.fromWif(config.wif) });
+			deepStrictEqual(new Set(Object.keys(res.contractResult)), new Set(['exec_res', 'tr_receipt']));
+			ok(BigNumber.isBigNumber(res.decodedResult));
+			ok(res.decodedResult.eq(123));
+			deepStrictEqual(res.events, {});
+			ok(Array.isArray(res.transactionResult));
+			strictEqual(res.transactionResult.length, 1);
+			deepStrictEqual(
+				new Set(Object.keys(res.transactionResult[0])),
+				new Set(['id', 'block_num', 'trx_num', 'trx']),
+			);
+			ok(await contract.methods.getVariable().call().then((/** @type {BigNumber} */res) => res.eq(123)));
+		}).timeout(7e3);
 	});
 });

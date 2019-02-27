@@ -48,6 +48,7 @@ export function encodeInteger(bitsCount, value) {
  */
 export function encodeAddress(address) {
 	if (typeof address !== 'string') throw new Error('address is not a string');
+	if (/^0x[a-fA-F\d]{40}$/.test(address)) return address.slice(2).padStart(64, '0');
 	if (!/^1\.(2|16)\.(([1-9]\d*)|0)$/.test(address)) throw new Error('invalid address format');
 	const [, instanceTypeId, objectId] = address.split('.').map((str) => new BigNumber(str, 10));
 	const preRes = objectId.toString(16);

@@ -18,7 +18,7 @@
 		"dot-location": ["error", "property"],
 		"dot-notation": "error",
 		"eqeqeq": ["error", "always"],
-		"indent": ["error", "tab"],
+		"indent": ["error", "tab", { "SwitchCase": 1 }],
 		"linebreak-style": ["error", "unix"],
 		"no-alert": "error",
 		"no-caller": "error",

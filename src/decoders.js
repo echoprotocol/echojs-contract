@@ -55,6 +55,7 @@ export function decodeSignedInteger(bitsCount, value) {
  */
 export function decodeAddress(value) {
 	checkValue(value);
+	if (value.substr(0, 24) === ''.padStart(24, '0') && value[24] !== '0') return `0x${value.substr(24)}`;
 	if (value.substr(0, 25) !== $c(25, () => '0').join('')) throw new Error('first 100 bits are not zeros');
 	const _13thByte = value.substr(24, 2);
 	if (!/^0[01]$/.test(_13thByte)) throw new Error('13th byte is not in ["00", "01"]');
@@ -170,7 +171,14 @@ export function decodeArgument(code, index, type) {
  * @return {*|Array.<*>}
  */
 export function decode(rawCode, types) {
-	if (rawCode.length % 64 !== 0) throw new Error('length of code is not divisible by 32 bytes');
+	if (rawCode.length % 64 !== 0) {
+		if (rawCode.slice(0, 8) === '08c379a0') {
+			const errMessageLen = Number.parseInt(rawCode.slice(72, 136), 16);
+			const errMessage = Buffer.from(rawCode.slice(136), 'hex').slice(0, errMessageLen).toString();
+			throw new Error(errMessage);
+		}
+		throw new Error('length of code is not divisible by 32 bytes');
+	}
 	const code = $c({ to: rawCode.length, step: 64 }, (i) => rawCode.substr(i, 64));
 	let i = 0;
 	/**
@@ -184,6 +192,7 @@ export function decode(rawCode, types) {
 	};
 	const res = types.map((type) => decodeType(type));
 	if (types.length === 1) return res[0];
+	if (types.length === 0) return null;
 	return res;
 }
 
