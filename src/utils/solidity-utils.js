@@ -1,3 +1,4 @@
+import { ok } from 'assert';
 import { keccak256 } from 'js-sha3';
 
 /** @typedef {import("../../types/_Abi").AbiMethod} AbiMethod */
@@ -39,8 +40,18 @@ export function checkAbiFormat(abi) {
 	for (const abiMethod of abi) {
 		// typeof is uncovered. see https://github.com/gotwarlost/istanbul/issues/582
 		if (typeof abiMethod !== 'object' || abiMethod === null) throw new Error('abi method is not an object');
-		if (typeof abiMethod.name !== 'string') throw new Error('abi method name is not a string');
-		if (!Array.isArray(abiMethod.inputs)) throw new Error('inputs of abi method is not an array');
-		if (!Array.isArray(abiMethod.outputs)) throw new Error('outputs of abi method is not an array');
+		if (abiMethod.type === 'fallback') {
+			ok(abiMethod.payable === true && abiMethod.stateMutability === 'payable', 'abi method is not payable');
+			ok(abiMethod.inputs === undefined, 'unexpected inputs array of fallback-function');
+			ok(abiMethod.outputs === undefined, 'unexpected outputs array of fallback-function');
+		} else {
+			if (abiMethod.type !== 'constructor' && typeof abiMethod.name !== 'string') {
+				throw new Error('abi method name is not a string');
+			}
+			if (!Array.isArray(abiMethod.inputs)) throw new Error('inputs of abi method is not an array');
+			if (abiMethod.type === 'function' && !Array.isArray(abiMethod.outputs)) {
+				throw new Error('outputs of abi method is not an array');
+			}
+		}
 	}
 }

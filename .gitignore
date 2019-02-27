@@ -4,3 +4,6 @@ package-lock.json
 dist/
 coverage/
 .nyc_output/
+test/**/*.abi
+test/**/*.bin
+config/local.json

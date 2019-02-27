@@ -4,7 +4,7 @@ export { SolType };
 
 export type AbiStateMutability = 'view' | 'nonpayable' | 'payable' | 'pure';
 
-export type AbiMethodType = 'constructor' | 'function' | 'event';
+export type AbiMethodType = 'constructor' | 'function' | 'event' | 'fallback';
 
 export interface AbiArgument {
 	name: string;
@@ -20,3 +20,5 @@ export interface AbiMethod {
 	stateMutability: AbiStateMutability;
 	type: AbiMethodType;
 };
+
+export type Abi = Array<AbiMethod>;

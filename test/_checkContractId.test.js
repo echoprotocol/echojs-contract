@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import BigNumber from 'bignumber.js';
 
 const invalidContractIds = ['.2.0', '116.123', '1.16123', '1.16.', '1.16.0123'];
 

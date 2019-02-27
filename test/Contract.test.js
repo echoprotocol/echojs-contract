@@ -46,11 +46,11 @@ describe('Contract', () => {
 			const func = () => new Contract([], { echo: 'not_a_Echo_instance' });
 			expect(func).to.throw(Error, 'value is not a instance of Echo');
 		});
-		it('function without a name', () => {
-			/** @type {Abi} */
-			const abi = [{ ...defaultAbiMethod, name: undefined }];
-			expect(() => new Contract(abi)).to.throw(Error, 'abi method name is not a string');
-		});
+		// it('function without a name', () => {
+		// 	/** @type {Abi} */
+		// 	const abi = [{ ...defaultAbiMethod, name: undefined }];
+		// 	expect(() => new Contract(abi)).to.throw(Error, 'abi method name is not a string');
+		// });
 		it('type not equals to "function"', () => {
 			/** @type {Abi} */
 			const abi = [{ ...defaultAbiMethod, type: 'not_a_function' }];
@@ -113,7 +113,7 @@ describe('Contract', () => {
 			strictEqual(typeof contract.methods['qwe(bytes)'], 'function');
 			strictEqual(contract.methods['0xc6e5f097'], contract.methods['qwe(bytes)']);
 			notStrictEqual(contract.methods['qwe(bytes)'], contract.methods['qwe(uint32)']);
-			notStrictEqual(contract.methods['qwe(bytes)'], contract.methods['string']);
+			notStrictEqual(contract.methods['qwe(bytes)'], contract.methods['qwe(string)']);
 
 			const { namesDublications } = contract;
 			ok(namesDublications instanceof Set);
