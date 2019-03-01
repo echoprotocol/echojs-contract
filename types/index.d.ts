@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { PrivateKey, Echo, BigNumber, Transaction } from 'echojs-lib';
 import * as EchoJSLib from 'echojs-lib';
 import { ContractResult as ApiContractResult } from 'echojs-lib/types/echo/api';
@@ -19,12 +18,6 @@ type ContractTransaction<T, TEvents> = Omit<Transaction, 'broadcast'> & {
 };
 
 declare class Method<T = any, TEvents = { [eventName: string]: { [field: string]: any } }> {
-=======
-import { PrivateKey, Echo, BigNumber } from 'echojs-lib';
-import { Abi } from './_Abi';
-
-declare class Method<T = null> {
->>>>>>> 1.0.0
 	readonly code: string;
 	constructor(contract: Contract, abiMethodotputs: Abi, code: string);
 
@@ -35,7 +28,6 @@ declare class Method<T = null> {
 		echo?: Echo,
 	}): Promise<T>;
 
-<<<<<<< HEAD
 	buildTransaction(options?: {
 		contractId?: string,
 		registrar?: string,
@@ -61,11 +53,6 @@ declare class Method<T = null> {
 declare class Contract<TDeployArgs = Array<any>> {
 
 	__TDeployArgs__: TDeployArgs;
-=======
-}
-
-declare class Contract {
->>>>>>> 1.0.0
 
 	static deploy(
 		code: Buffer | string,
@@ -78,11 +65,7 @@ declare class Contract {
 		},
 	): Promise<string>;
 
-<<<<<<< HEAD
 	static deploy<T = Array<any>>(
-=======
-	static deploy(
->>>>>>> 1.0.0
 		code: Buffer | string,
 		echo: Echo,
 		privateKey: PrivateKey,
@@ -91,16 +74,12 @@ declare class Contract {
 			ethAccuracy?: boolean,
 			supportedAssetId?: string,
 			value?: { amount?: number | string | BigNumber, asset_id?: string },
-<<<<<<< HEAD
 			args?: any,
-=======
->>>>>>> 1.0.0
 		},
 	): Promise<Contract>;
 
 	readonly namesDublications: Set<string>;
 	readonly methods: { [nameOrHashOrSignature: string]: (...args: Array<any>) => Method };
-<<<<<<< HEAD
 	constructor(abi: Abi, options?: { echo?: Echo, contractId?: string });
 	abi: Abi;
 	echo: Echo;
@@ -125,14 +104,4 @@ declare function generateInterface(contractName: string, abi: Abi, indent?: stri
 
 export default Contract;
 export { Abi, Method, generateInterface, EchoJSLib };
-=======
-	constructor(abi: Abi, options?: { echo: Echo, contractId: string });
-	abi: Abi;
-	echo: Echo;
-	address?: string;
-}
-
-export default Contract;
-export { Abi, Method };
->>>>>>> 1.0.0
 export { PrivateKey, default as echo, Echo, BigNumber } from "echojs-lib";
