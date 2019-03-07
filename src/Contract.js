@@ -66,6 +66,7 @@ class Contract {
 			throw new Error('invalid assetId format');
 		}
 		const [[accountId]] = await echo.api.getKeyReferences([privateKey.toPublicKey()]);
+		if (!accountId) throw new Error('No account with provided private key');
 		let rawArgs = '';
 		if (options.args !== undefined) {
 			ok(Array.isArray(options.args), 'option "args" is not an array');
