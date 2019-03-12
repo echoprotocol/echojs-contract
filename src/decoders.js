@@ -55,12 +55,14 @@ export function decodeSignedInteger(bitsCount, value) {
  */
 export function decodeAddress(value) {
 	checkValue(value);
-	if (value.substr(0, 24) === ''.padStart(24, '0') && value[24] !== '0') return `0x${value.substr(24)}`;
-	if (value.substr(0, 25) !== $c(25, () => '0').join('')) throw new Error('first 100 bits are not zeros');
+	if (value.startsWith(''.padStart(24, '0')) && value[24] !== '0') return `0x${value.substr(24)}`;
+	if (!value.startsWith(''.padStart(25, '0'))) throw new Error('first 100 bits are not zeros');
 	const _13thByte = value.substr(24, 2);
 	if (!/^0[01]$/.test(_13thByte)) throw new Error('13th byte is not in ["00", "01"]');
 	const isContract = _13thByte === '01';
-	return ['1', isContract ? '16' : '2', new BigNumber(value.substr(26), 16)].join('.');
+	const accountIndex = new BigNumber(value.substr(26), 16);
+	if (accountIndex.gte('2**32')) return `0x${accountIndex.toString(16).padStart(40, '0')}`;
+	return ['1', isContract ? '16' : '2', accountIndex.toString(10)].join('.');
 }
 
 /**

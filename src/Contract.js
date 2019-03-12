@@ -85,15 +85,19 @@ class Contract {
 			/** @type {import("echojs-lib/types/echo/transaction").OPERATION_RESULT<OPERATION_RESULT_VARIANT.OBJECT>} */
 			const [, opResId] = res[0].trx.operation_results[0];
 			const execRes = await echo.api.getContractResult(opResId, true).then((res) => res[1].exec_res);
-			if (execRes.excepted !== 'None') {
-				if (execRes.excepted !== 'RevertInstruction' || execRes.output.slice(0, 8) !== '08c379a0') {
-					throw execRes;
-				}
-				const errorMessageLength = Number.parseInt(execRes.output.slice(72, 136), 16);
-				const errorMessageBuffer = Buffer.from(execRes.output.slice(136), 'hex').slice(0, errorMessageLength);
-				throw new Error(errorMessageBuffer.toString('utf8'));
-			}
+			if (execRes.excepted !== 'None') throw execRes;
 			return `1.16.${new BigNumber(execRes.new_address.slice(2), 16).toString(10)}`;
+		}).catch((err) => {
+			if (typeof err !== 'object' || err.code !== 1 || typeof err.message !== 'string') throw err;
+			const expectedErrorPrefix = 'unspecified: Exception during execution: ';
+			if (!err.message.startsWith(expectedErrorPrefix)) throw err;
+			const execRes = JSON.parse(err.message.slice(expectedErrorPrefix.length));
+			if (execRes.excepted !== 'RevertInstruction' || execRes.output.slice(0, 8) !== '08c379a0') {
+				throw err;
+			}
+			const errorMessageLength = Number.parseInt(execRes.output.slice(72, 136), 16);
+			const errorMessageBuffer = Buffer.from(execRes.output.slice(136), 'hex').slice(0, errorMessageLength);
+			throw new Error(errorMessageBuffer.toString('utf8'));
 		});
 		if (options.abi === undefined) return contractId;
 		return new Contract(options.abi, { echo, contractId });

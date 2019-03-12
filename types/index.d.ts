@@ -103,5 +103,6 @@ declare class Contract<TDeployArgs = Array<any>> {
 declare function generateInterface(contractName: string, abi: Abi, indent?: string): string;
 
 export default Contract;
-export { Abi, Method, generateInterface, EchoJSLib };
 export { PrivateKey, default as echo, Echo, BigNumber } from "echojs-lib";
+export { default as encode } from "./encode";
+export { Abi, Method, generateInterface, EchoJSLib };
