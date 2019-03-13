@@ -5,4 +5,5 @@ import * as EchoJSLib from 'echojs-lib';
 export default Contract;
 export { PrivateKey, default as echo, Echo, BigNumber } from 'echojs-lib';
 export { default as encode } from './encoders';
+export { default as decode } from './decoders';
 export { generateInterface, EchoJSLib };
