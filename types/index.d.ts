@@ -105,4 +105,5 @@ declare function generateInterface(contractName: string, abi: Abi, indent?: stri
 export default Contract;
 export { PrivateKey, default as echo, Echo, BigNumber } from "echojs-lib";
 export { default as encode } from "./encode";
+export { default as decode } from "./decode";
 export { Abi, Method, generateInterface, EchoJSLib };
