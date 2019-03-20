@@ -21,6 +21,7 @@ function parseType(type, isInput = true) {
 		if (bitsCount <= 48) return { res: `${prefix}['small_integer']` };
 		return { res: `${prefix}['big_integer']` };
 	}
+	if (type === 'bytes') return { res: `${prefix}['bytes']` };
 	const bytesMatch = type.match(/^bytes(\d+)?$/);
 	if (bytesMatch) {
 		const bytesCount = Number.parseInt(bytesMatch[1], 10);

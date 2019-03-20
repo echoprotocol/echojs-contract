@@ -143,7 +143,22 @@ export default class Method {
 	async broadcast(options = {}) {
 		ok(options.privateKey !== undefined, 'private key not provided');
 		const tx = await this.buildTransaction(options);
-		return await tx.broadcast();
+		let result;
+		try {
+			result = await tx.broadcast();
+		} catch (err) {
+			if (typeof err !== 'object' || err.code !== 1 || typeof err.message !== 'string') throw err;
+			const expectedErrorPrefix = 'unspecified: Exception during execution: ';
+			if (!err.message.startsWith(expectedErrorPrefix)) throw err;
+			const execRes = JSON.parse(err.message.slice(expectedErrorPrefix.length));
+			if (execRes.excepted !== 'RevertInstruction' || execRes.output.slice(0, 8) !== '08c379a0') {
+				throw err;
+			}
+			const errorMessageLength = Number.parseInt(execRes.output.slice(72, 136), 16);
+			const errorMessageBuffer = Buffer.from(execRes.output.slice(136), 'hex').slice(0, errorMessageLength);
+			throw new Error(errorMessageBuffer.toString('utf8'));
+		}
+		return result;
 	}
 
 	/**
