@@ -7,6 +7,7 @@
 	"scripts": {
 		"build": "npx babel src --out-dir dist --copy-files",
 		"lint": "eslint .",
+		"prepare": "npm run build",
 		"posttest": "nyc report --reporter=text-summary --reporter=html",
 		"prepublishOnly": "npm run test && npm run build",
 		"test": "nyc npx mocha --require @babel/register ./test/index.test.js --exit",
