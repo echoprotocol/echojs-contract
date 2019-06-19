@@ -2,7 +2,7 @@ import comprehension from 'comprehension';
 import { TransactionBuilder, PrivateKey } from 'echojs-lib';
 import { Apis } from 'echojs-ws';
 import { keccak256 } from 'js-sha3';
-import parseInputs, { parseInput } from '../simple-utils/parseInput';
+import parseInputs from '../simple-utils/parseInput';
 import { parseOutput } from '../simple-utils/parseOutput';
 import AbiFunction from '../types/abiFunction';
 import BigNumber from 'bignumber.js';
@@ -31,20 +31,18 @@ export async function call(
 	const functionCode = getFunctionCode(abiFunction);
 	const pureArgs = parseInputs(abiFunction.inputs.map(({ type }, inputIndex) => ({ type, arg: args[inputIndex] })));
 	const transaction = new TransactionBuilder();
-	transaction.add_type_operation('contract', {
+	transaction.add_type_operation('call_contract', {
 		registrar: accountId,
 		receiver: contractId,
 		asset_id: '1.3.0',
-		value: new BigNumber(value).times(1e5).toNumber(),
-		gasPrice: 0,
-		gas: 10e6,
+		value: { amount: new BigNumber(value).times(1e5).toNumber(), asset_id: '1.2.0' },
 		code: functionCode + pureArgs,
 	});
 	await transaction.set_required_fees('1.3.0');
 	transaction.add_signer(privateKey);
 	const transactionResultId = await transaction.broadcast().then((res) => res[0].trx.operation_results[0][1]);
 	const callResult = await Apis.instance().dbApi().exec('get_contract_result', [transactionResultId])
-		.then((res) => res.exec_res.output);
+		.then(([_, res]) => res.exec_res.output);
 	if (callResult === undefined && abiFunction.outputs!.length > 0) throw new Error('Transaction failed');
 	return parseResult(callResult as string, abiFunction);
 }

@@ -5,6 +5,7 @@ import { parseInput } from "../simple-utils/parseInput";
 import getAccountId from "./getAccountId";
 import AbiFunction from "../types/abiFunction";
 import { GET_DEFAULT_ABI_FUNCTION } from "../index";
+import { ContractId } from "../ObjectId";
 
 export default async function deploy(
 	bytecode: Buffer,
@@ -23,13 +24,12 @@ export default async function deploy(
 		.join('');
 	const deployCallRes = await contractFrame.deployContract({
 		accountId,
-		gas: 10e6,
 		bytecode: bytecode.toString('hex') + pureArguments,
 	}, privateKey!);
 	const deployResultId: string = deployCallRes[0].trx.operation_results[0][1];
 	const deployResult = await Apis.instance().dbApi().exec('get_contract_result', [deployResultId]);
-	const contractId = `1.16.${Number.parseInt((deployResult.exec_res.new_address as string).substr(8), 16)}`;
-	const contract = new Contract(contractId, abi);
+	const contractId = new ContractId(Number.parseInt((deployResult[1].exec_res.new_address as string).substr(8), 16));
+	const contract = new Contract(contractId.toString(), abi);
 	await contract.setAccount(privateKey!);
 	return contract;
 }

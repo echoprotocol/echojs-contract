@@ -3,6 +3,7 @@ import $c from 'comprehension';
 
 import SolType from '../types/sol-type';
 import { Arg } from '../';
+import { ContractId, AccountId } from '../ObjectId';
 
 export function bool(ouput: string) {
 	if (ouput === $c(64, () => 0).join('')) return false;
@@ -21,7 +22,8 @@ export function address(output: string) {
 		};
 	}
 	const isContract = output[25] === '1';
-	return `1.${isContract ? '16' : '2'}.${new BN(output.substr(26), 16)}`;
+	const index = Number.parseInt(output.substr(26), 16);
+	return isContract ? new ContractId(index) : new AccountId(index);
 }
 
 export function bytesN(bytesCount: number, output: string): Buffer {

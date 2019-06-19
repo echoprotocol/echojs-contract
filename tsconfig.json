@@ -15,6 +15,7 @@
 				"./typing/*"
 			]
 		},
+		"target": "es5",
 		"typeRoots": [
 			"./node_modules/@types",
 			"./typing"

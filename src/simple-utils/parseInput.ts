@@ -1,13 +1,17 @@
 import BN from 'bignumber.js';
 import $c from 'comprehension';
 import SolType from '../types/sol-type';
+import ObjectId, { ProtocolObjectId, PROTOCOL_OBJECT_TYPE } from '../ObjectId';
 
 export function address(input: string): string {
 	const sourceAddress = input || '1.2.0';
-	if (!/^1\.(2|16)\.(([1-9]\d*)|0)$/.test(sourceAddress)) throw new Error('invalid address format');
-	const preRes = new BN(sourceAddress.split('.')[2]).toString(16);
+	const objectId = ProtocolObjectId.fromString(sourceAddress);
+	if (![PROTOCOL_OBJECT_TYPE.ACCOUNT, PROTOCOL_OBJECT_TYPE.CONTRACT].includes(objectId.objectType)) {
+		throw new Error('address should be account or contract id');
+	}
+	const preRes = objectId.index.toString(16);
 	if (preRes.length > 38) throw new Error('invalid address id');
-	const isContract = sourceAddress.split('.')[1] === '16';
+	const isContract = objectId.objectType === PROTOCOL_OBJECT_TYPE.CONTRACT;
 	return [
 		$c(25, () => 0).join(''),
 		isContract ? '1' : '0',

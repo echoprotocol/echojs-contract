@@ -3,6 +3,7 @@ import "mocha";
 import { parseOutputs } from "../src";
 import { deepStrictEqual } from "assert";
 import BigNumber from "bignumber.js";
+import { ContractId } from "../src/ObjectId";
 
 describe('outputParser', () => {
 
@@ -45,7 +46,7 @@ describe('outputParser', () => {
 			[
 				Buffer.from('88b9c2bbc10b432a6fdfee678996f3ebf9a0ef9b5bcc91acf2a96963790646eb', 'hex'),
 				'=g!8MI&EnGF:K$[&Ct/S=iFtl.v)uDa-)]<a<SSB+*(59[RX',
-				'1.16.321',
+				new ContractId(321),
 				[
 					Buffer.from('258399d253bfa96802fcbebc08336757e2d8119be009f40215d579923ffa5f67', 'hex'),
 					Buffer.from('9c203a46b9d600183bb1f2badba93facc8033ab30a1cce8e07d58bccf6101c3f', 'hex'),
