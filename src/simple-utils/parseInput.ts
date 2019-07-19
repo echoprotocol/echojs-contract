@@ -44,15 +44,26 @@ export function bytesN(bytesCount: number, input?: string | Buffer | { value: st
 	return input.toString('hex') + $c(32 - input.length, () => '00').join('');
 }
 
-export function uintN(bitsCount: number = 256, input: number | BN = 0): string {
+export function uintN(bitsCount: number = 256, input: number | BN | string = 0): string {
 	if (bitsCount <= 0) throw new Error('bits count is not positive');
 	if (bitsCount > 256) throw new Error('bits count is greater than 256');
 	if (bitsCount % 8 !== 0) throw new Error('bits count is not divisible by 8');
-	if (typeof input === 'number') {
-		if (input > Number.MAX_SAFE_INTEGER) throw new Error('loss of accuracy, use BigNumber.js');
-		input = new BN(input);
+	switch (typeof input) {
+		case 'number':
+			if (input > Number.MAX_SAFE_INTEGER) throw new Error('loss of accuracy, use BigNumber.js');
+			input = new BN(input);
+			break;
+		case 'string':
+			if (input.startsWith('0x')) {
+				input = input.toLowerCase()
+				if (!/^0x[\da-f]$/.test(input)) throw new Error('invalid hex uint value');
+				input = new BN(input.slice(2), 16)
+				break;
+			}
+			if (!/^[\da-f]$/.test(input)) throw new Error('invalid string uint value');
+			input = new BN(input.slice(2), 10);
+			break;
 	}
-	input = input as BN;
 	if (input.isNegative()) throw new Error('input is negative');
 	if (!input.isInteger()) throw new Error('input is not integer');
 	if (input.gte(new BN(2).pow(bitsCount))) throw new Error('is greater than max value');
