@@ -55,13 +55,13 @@ export function uintN(bitsCount: number = 256, input: number | BN | string = 0):
 			break;
 		case 'string':
 			if (input.startsWith('0x')) {
-				input = input.toLowerCase()
-				if (!/^0x[\da-f]$/.test(input)) throw new Error('invalid hex uint value');
+				input = input.toLowerCase();
+				if (!/^0x([\da-f]{2})+$/.test(input)) throw new Error('invalid hex uint value');
 				input = new BN(input.slice(2), 16)
 				break;
 			}
-			if (!/^[\da-f]$/.test(input)) throw new Error('invalid string uint value');
-			input = new BN(input.slice(2), 10);
+			if (!/^\d+$/.test(input)) throw new Error('invalid string uint value');
+			input = new BN(input, 10);
 			break;
 	}
 	if (input.isNegative()) throw new Error('input is negative');
