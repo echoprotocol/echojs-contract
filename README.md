@@ -78,7 +78,7 @@ Read our [Contributing Guide](https://github.com/echoprotocol/echojs-contract/CO
 
 The MIT License
 
-Copyright (c) 2018-2019 Pixelplex, Inc. https://pixelplex.io
+Copyright (c) Pixelplex, Inc. https://pixelplex.io
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
