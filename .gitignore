@@ -1,5 +1,9 @@
 node_modules/
-dist/
 package-lock.json
-test/contracts/output.json
-test/contracts/interfaces/
+.idea/
+dist/
+coverage/
+.nyc_output/
+test/**/*.abi
+test/**/*.bin
+config/local.json
