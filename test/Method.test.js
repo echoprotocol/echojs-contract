@@ -17,6 +17,7 @@ describe('Method', () => {
 	let contract = null;
 
 	before(async function () {
+		// eslint-disable-next-line no-invalid-this
 		this.timeout(9e3);
 		await echo.connect(config.rpcAddress);
 		const { abi, code } = await getContract();

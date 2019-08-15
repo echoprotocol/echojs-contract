@@ -1,7 +1,7 @@
 {
 	"name": "echojs-contract",
-	"version": "0.5.1",
-	"description": "JS library for easy use of ECHO contracts",
+	"version": "0.5.2",
+	"description": "JS library for easy use of Echo contracts",
 	"main": "./dist/index.js",
 	"types": "./types/index.d.ts",
 	"scripts": {

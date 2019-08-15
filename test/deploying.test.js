@@ -27,6 +27,7 @@ describe('deploy', () => {
 	let echo = new Echo();
 
 	before(async function () {
+		// eslint-disable-next-line no-invalid-this
 		this.timeout(8e3);
 		await Promise.all([
 			async () => ({ code, abi } = await getContract()),

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { compileContract } from './__testContract';
 import { inspect } from 'util';
 

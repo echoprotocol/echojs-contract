@@ -1,5 +1,5 @@
 import { ok } from 'assert';
-import { Echo, PrivateKey, OPERATIONS, constants } from 'echojs-lib';
+import { Echo, PrivateKey, constants } from 'echojs-lib';
 import _ from 'lodash';
 import ContractTransaction from './ContractTransaction';
 import decode from './decoders';
