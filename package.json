@@ -13,12 +13,16 @@
 		"test": "nyc npx mocha --require @babel/register ./test/index.test.js --exit",
 		"pretest": "npx babel-node ./test/__pretest.js"
 	},
+	"homepage": "https://github.com/echoprotocol/echojs-contract",
 	"repository": {
 		"type": "git",
-		"url": "git@gitlab.pixelplex.by:645.echo/echojs/echojs-contract.git"
+		"url": "https://github.com/echoprotocol/echojs-contract.git"
+	},
+	"bugs": {
+		"url": "https://github.com/echoprotocol/echojs-contract/issues"
 	},
 	"author": "PixelPlex",
-	"license": "UNLICENSED",
+	"license": "MIT",
 	"dependencies": {
 		"@babel/cli": "^7.2.3",
 		"@babel/core": "^7.3.3",
