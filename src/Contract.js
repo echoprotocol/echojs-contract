@@ -1,4 +1,5 @@
-import { Echo, OPERATIONS, PrivateKey, BigNumber } from 'echojs-lib';
+import BigNumber from 'bignumber.js';
+import { Echo, OPERATIONS, PrivateKey } from 'echojs-lib';
 import { cloneDeep } from 'lodash';
 
 import encode from './encoders';

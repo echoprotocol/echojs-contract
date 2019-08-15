@@ -1,4 +1,5 @@
-import { PrivateKey, Echo, BigNumber, Transaction } from 'echojs-lib';
+import BigNumber from 'bignumber.js';
+import { PrivateKey, Echo, Transaction } from 'echojs-lib';
 import * as EchoJSLib from 'echojs-lib';
 import { ContractResult as ApiContractResult } from 'echojs-lib/types/echo/api';
 import { BroadcastingResult } from 'echojs-lib/types/echo/transaction';
@@ -103,7 +104,8 @@ declare class Contract<TDeployArgs = Array<any>> {
 declare function generateInterface(contractName: string, abi: Abi, indent?: string): string;
 
 export default Contract;
-export { PrivateKey, default as echo, Echo, BigNumber } from "echojs-lib";
+export { default as BigNumber } from "bignumber.js";
+export { PrivateKey, default as echo, Echo } from "echojs-lib";
 export { default as encode } from "./encode";
 export { default as decode } from "./decode";
 export { Abi, Method, generateInterface, EchoJSLib };

@@ -1,4 +1,4 @@
 {
-	"wif": "",
-	"rpcAddress": "wss://devnet.echo-dev.io/ws"
+	"rpcAddress": "wss://testnet.echo-dev.io/ws",
+	"wif": ""
 }

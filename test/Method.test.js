@@ -1,7 +1,8 @@
 import 'mocha';
 import { strictEqual, ok, fail, deepStrictEqual } from 'assert';
+import BigNumber from 'bignumber.js';
 import $c from 'comprehension';
-import echo, { PrivateKey, BigNumber } from 'echojs-lib';
+import echo, { PrivateKey } from 'echojs-lib';
 
 import Contract from '../src/Contract';
 import checkContractIdTests from './_checkContractId.test';

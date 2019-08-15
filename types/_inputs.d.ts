@@ -1,4 +1,4 @@
-import { BigNumber } from "echojs-lib";
+import { BigNumber } from "bignumber.js";
 
 type INPUT = {
 	boolean: boolean;

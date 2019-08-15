@@ -1,4 +1,6 @@
-import { Echo, PrivateKey, BigNumber } from 'echojs-lib';
+import BigNumber from 'bignumber.js';
+import { Echo, PrivateKey } from 'echojs-lib';
+
 import { getContract } from './__testContract';
 import Contract from '../src/Contract';
 import { ok, strictEqual } from 'assert';
