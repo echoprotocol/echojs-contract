@@ -1,9 +1,9 @@
 import { ok } from 'assert';
-import { Echo, PrivateKey, OPERATIONS } from 'echojs-lib';
+import { Echo, PrivateKey, OPERATIONS, constants } from 'echojs-lib';
 import _ from 'lodash';
 import ContractTransaction from './ContractTransaction';
 import decode from './decoders';
-import { checkContractId } from './utils/validators';
+import { checkContractId, contractIdRegExp } from './utils/validators';
 
 const NATHAN_ID = '1.2.12';
 
@@ -111,7 +111,7 @@ export default class Method {
 			throw new Error('invalid privateKey');
 		}
 		if (options.contractId !== undefined) {
-			if (!/^1\.16\.(0|[1-9]\d*)$/.test(options.contractId)) throw new Error('invalid contractId format');
+			if (!contractIdRegExp.test(options.contractId)) throw new Error('invalid contractId format');
 		} else {
 			if (this._contract.address === undefined) throw new Error('contractId is not provided');
 			options.contractId = this._contract.address;
@@ -172,7 +172,7 @@ export default class Method {
 	_createTransaction(callee, registrar, privateKey, value) {
 		value = { amount: 0, asset_id: '1.3.0', ...value };
 		const result = new ContractTransaction(this._contract.echo.api, this)
-			.addOperation(OPERATIONS.CALL_CONTRACT, {
+			.addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, {
 				callee,
 				code: this.code,
 				registrar: registrar,

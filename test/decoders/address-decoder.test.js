@@ -4,6 +4,7 @@ import { expect } from 'chai';
 import { decodeAddress } from '../../src/decoders';
 import valueTests from './_value.test';
 import decode from '../../src/decoders';
+import { constants } from 'echojs-lib';
 
 describe('address', () => {
 	describe('failure', () => {
@@ -41,13 +42,13 @@ describe('address', () => {
 		});
 		it('contract', () => {
 			const address = decodeAddress('000000000000000000000000010000000000000000000000000000000000dead');
-			strictEqual(address, '1.16.57005');
+			strictEqual(address, `1.${constants.OBJECT_TYPES.CONTRACT}.57005`);
 		});
 		it('by default decoder', () => {
 			const account = decode('000000000000000000000000000000000000000000000000000000000000dead', ['address']);
 			strictEqual(account, '1.2.57005');
 			const contract = decode('000000000000000000000000010000000000000000000000000000000000dead', ['address']);
-			strictEqual(contract, '1.16.57005');
+			strictEqual(contract, `1.${constants.OBJECT_TYPES.CONTRACT}.57005`);
 		});
 	});
 });

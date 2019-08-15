@@ -3,6 +3,8 @@ import $c from 'comprehension';
 import { toBigInteger, toTwosPower } from './utils/converters';
 import { toTwosComplementRepresentation } from './utils/number-representations';
 import { checkBytesCount, checkIntegerSize } from './utils/solidity-utils';
+import { addressRegExp } from './utils/validators';
+import { constants } from 'echojs-lib';
 
 /**
  * @param {boolean} value
@@ -49,11 +51,11 @@ export function encodeInteger(bitsCount, value) {
 export function encodeAddress(address) {
 	if (typeof address !== 'string') throw new Error('address is not a string');
 	if (/^0x[a-fA-F\d]{40}$/.test(address)) return address.slice(2).padStart(64, '0');
-	if (!/^1\.(2|16)\.(([1-9]\d*)|0)$/.test(address)) throw new Error('invalid address format');
+	if (!addressRegExp.test(address)) throw new Error('invalid address format');
 	const [, instanceTypeId, objectId] = address.split('.').map((str) => new BigNumber(str, 10));
 	const preRes = objectId.toString(16);
 	if (preRes.length > 38) throw new Error('objectId is greater or equals to 2**152');
-	const isContract = instanceTypeId.eq(16);
+	const isContract = instanceTypeId.eq(constants.OBJECT_TYPES.CONTRACT);
 	return [
 		$c(25, () => 0).join(''),
 		isContract ? '1' : '0',

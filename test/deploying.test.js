@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { Echo, PrivateKey } from 'echojs-lib';
+import { Echo, PrivateKey, constants } from 'echojs-lib';
 
 import { getContract } from './__testContract';
 import Contract from '../src/Contract';
@@ -13,7 +13,7 @@ const config = require('config');
  * @returns {boolean}
  */
 function isContractId(id) {
-	return /^1\.16\.[1-9]\d*$/.test(id);
+	return new RegExp(`^1\\.${constants.OBJECT_TYPES.CONTRACT}\\.[1-9]\\d*$`).test(id);
 }
 
 describe('deploy', () => {
@@ -38,7 +38,7 @@ describe('deploy', () => {
 		const res = await Contract.deploy(code, echo, PrivateKey.fromWif(config.wif));
 		strictEqual(typeof res, 'string', 'invalid result type');
 		ok(isContractId(res), 'invalid result format');
-	}).timeout(7e3);
+	}).timeout(8e3);
 
 	it('successful (with abi)', async () => {
 		/** @type {Contract} */

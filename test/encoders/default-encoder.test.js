@@ -5,6 +5,8 @@ import { expect } from 'chai';
 import $c from 'comprehension';
 import encode from '../../src/encoders';
 import { toTwosPower } from '../../src/utils/converters';
+import { invalidContractIds as invalidAddressesIds } from '../_checkContractId.test';
+import { constants } from 'echojs-lib';
 
 describe('encode', () => {
 
@@ -118,7 +120,7 @@ describe('encode', () => {
 			value: 123,
 		})).to.throw(Error, 'address is not a string'));
 		it('invalid format', () => {
-			for (const invalidAddress of ['.2.0', '116.123', '1.16123', '1.16.', '1.16.0123']) {
+			for (const invalidAddress of invalidAddressesIds) {
 				expect(() => encode({
 					type: 'address',
 					value: invalidAddress,
@@ -127,11 +129,11 @@ describe('encode', () => {
 		});
 		it('objectId gt 2**152', () => expect(() => encode({
 			type: 'address',
-			value: `1.16.${toTwosPower(152).plus(123).toString(10)}`,
+			value: `1.${constants.OBJECT_TYPES.CONTRACT}.${toTwosPower(152).plus(123).toString(10)}`,
 		})).to.throw(Error, 'objectId is greater or equals to 2**152'));
 		it('objectId eqt 2**152', () => expect(() => encode({
 			type: 'address',
-			value: `1.16.${toTwosPower(152).toString(10)}`,
+			value: `1.${constants.OBJECT_TYPES.CONTRACT}.${toTwosPower(152).toString(10)}`,
 		})).to.throw(Error, 'objectId is greater or equals to 2**152'));
 		describe('successful', () => {
 			it('account', () => strictEqual(
@@ -139,13 +141,13 @@ describe('encode', () => {
 				'000000000000000000000000000000000000000000000000000000000000007b',
 			));
 			it('contract', () => strictEqual(
-				encode({ type: 'address', value: '1.16.321' }),
+				encode({ type: 'address', value: `1.${constants.OBJECT_TYPES.CONTRACT}.321` }),
 				'0000000000000000000000000100000000000000000000000000000000000141',
 			));
-			it('preoverflow', () => strictEqual(
-				encode({ type: 'address', value: '1.16.5708990770823839524233143877797980545530986495' }),
-				'00000000000000000000000001ffffffffffffffffffffffffffffffffffffff',
-			));
+			it('preoverflow', () => strictEqual(encode({
+				type: 'address',
+				value: `1.${constants.OBJECT_TYPES.CONTRACT}.5708990770823839524233143877797980545530986495`,
+			}), '00000000000000000000000001ffffffffffffffffffffffffffffffffffffff'));
 		});
 	});
 

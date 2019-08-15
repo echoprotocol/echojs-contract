@@ -3,6 +3,7 @@ import $c from 'comprehension';
 import { checkBytesCount, checkIntegerSize } from './utils/solidity-utils';
 import { fromTwosComplementRepresentation } from './utils/number-representations';
 import { toTwosPower } from './utils/converters';
+import { constants } from 'echojs-lib';
 
 /** @param {string} value */
 function checkValue(value) {
@@ -62,7 +63,7 @@ export function decodeAddress(value) {
 	const isContract = _13thByte === '01';
 	const accountIndex = new BigNumber(value.substr(26), 16);
 	if (accountIndex.gte('2**32')) return `0x${accountIndex.toString(16).padStart(40, '0')}`;
-	return ['1', isContract ? '16' : '2', accountIndex.toString(10)].join('.');
+	return ['1', isContract ? constants.OBJECT_TYPES.CONTRACT : '2', accountIndex.toString(10)].join('.');
 }
 
 /**

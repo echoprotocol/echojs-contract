@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { Echo, OPERATIONS, PrivateKey } from 'echojs-lib';
+import { Echo, PrivateKey, constants } from 'echojs-lib';
 import { cloneDeep } from 'lodash';
 
 import encode from './encoders';
@@ -76,7 +76,7 @@ class Contract {
 			ok(initArgsTypes.length === options.args.length, 'invalid arguments count');
 			rawArgs = encode(options.args.map((arg, index) => ({ value: arg, type: initArgsTypes[index] })));
 		}
-		const contractId = await echo.createTransaction().addOperation(OPERATIONS.CREATE_CONTRACT, {
+		const contractId = await echo.createTransaction().addOperation(constants.OPERATIONS_IDS.CREATE_CONTRACT, {
 			code: code + rawArgs,
 			eth_accuracy: options.ethAccuracy,
 			registrar: accountId,
@@ -87,7 +87,8 @@ class Contract {
 			const [, opResId] = res[0].trx.operation_results[0];
 			const execRes = await echo.api.getContractResult(opResId, true).then((res) => res[1].exec_res);
 			if (execRes.excepted !== 'None') throw execRes;
-			return `1.16.${new BigNumber(execRes.new_address.slice(2), 16).toString(10)}`;
+			const contractTypeId = constants.OBJECT_TYPES.CONTRACT;
+			return `1.${contractTypeId}.${new BigNumber(execRes.new_address.slice(2), 16).toString(10)}`;
 		}).catch((err) => {
 			if (typeof err !== 'object' || err.code !== 1 || typeof err.message !== 'string') throw err;
 			const expectedErrorPrefix = 'unspecified: Exception during execution: ';
